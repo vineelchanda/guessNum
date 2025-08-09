@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="game-container">
+        <h1>Guess the Number Game</h1>
+        <div id="game-info">
+            <p>Current Turn: <span id="current-turn">Player 1</span></p>
+            <p>Game ID: <span id="game-id"></span></p>
+        </div>
+        <div id="guess-section">
+            <input type="text" id="guess-input" placeholder="Enter your 4-digit guess" maxlength="4">
+            <button id="submit-guess">Submit Guess</button>
+        </div>
+        <div id="result-section">
+            <h2>Results</h2>
+            <ul id="results-list"></ul>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

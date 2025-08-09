@@ -1,0 +1,6 @@
+flask>=2.0,<2.2
+werkzeug>=2.0,<2.1
+firebase-admin==5.2.0
+gunicorn==20.1.0
+requests==2.26.0
+flask_cors==3.0.10
