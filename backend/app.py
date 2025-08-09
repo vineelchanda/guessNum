@@ -86,4 +86,4 @@ def game_status(game_id):
     return jsonify(game.to_dict()), 200
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=8080)
