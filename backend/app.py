@@ -99,94 +99,96 @@ def join_game(game_id):
 #     return jsonify({'error': 'This endpoint is deprecated. Use /submit_guess and /validate_guess.'}), 400
 
     # --- New endpoint: submit_guess ---
-    @app.route('/submit_guess/<game_id>', methods=['POST'])
-    def submit_guess(game_id):
-        guess = request.json.get('guess')
-        player = request.json.get('player')
-        game_ref = db.collection('games').document(game_id)
-        game = game_ref.get()
-        if not game.exists:
-            return jsonify({'error': 'Game not found'}), 404
-        game_data = game.to_dict()
-        if game_data['gameStatus'] != 'ongoing':
-            return jsonify({'error': 'Game has already finished'}), 400
 
-        # Check phase
-        if (player == 'player1' and game_data['gamePhase'] != 'player1Guessing') or (player == 'player2' and game_data['gamePhase'] != 'player2Guessing'):
-            return jsonify({'error': 'Not your turn to guess'}), 400
+    
+@app.route('/submit_guess/<game_id>', methods=['POST'])
+def submit_guess(game_id):
+    guess = request.json.get('guess')
+    player = request.json.get('player')
+    game_ref = db.collection('games').document(game_id)
+    game = game_ref.get()
+    if not game.exists:
+        return jsonify({'error': 'Game not found'}), 404
+    game_data = game.to_dict()
+    if game_data['gameStatus'] != 'ongoing':
+        return jsonify({'error': 'Game has already finished'}), 400
 
-        # Store guess in currentGuess and change phase
-        game_ref.update({
-            'currentGuess': {
-                'guess': guess,
-                'player': player
-            },
-            'gamePhase': 'player2Validating' if player == 'player1' else 'player1Validating'
-        })
-        return jsonify({'message': 'Guess submitted, waiting for validation'}), 200
+    # Check phase
+    if (player == 'player1' and game_data['gamePhase'] != 'player1Guessing') or (player == 'player2' and game_data['gamePhase'] != 'player2Guessing'):
+        return jsonify({'error': 'Not your turn to guess'}), 400
 
-    # --- New endpoint: validate_guess ---
-    @app.route('/validate_guess/<game_id>', methods=['POST'])
-    def validate_guess(game_id):
-        correct_digits = request.json.get('correct_digits')
-        correct_positions = request.json.get('correct_positions')
-        validator = request.json.get('player')  # The player who is validating
-        game_ref = db.collection('games').document(game_id)
-        game = game_ref.get()
-        if not game.exists:
-            return jsonify({'error': 'Game not found'}), 404
-        game_data = game.to_dict()
-        if game_data['gameStatus'] != 'ongoing':
-            return jsonify({'error': 'Game has already finished'}), 400
-
-        # Check phase
-        if (validator == 'player2' and game_data['gamePhase'] != 'player2Validating') or (validator == 'player1' and game_data['gamePhase'] != 'player1Validating'):
-            return jsonify({'error': 'Not your turn to validate'}), 400
-
-        # Get the guess
-        current_guess = game_data.get('currentGuess')
-        if not current_guess:
-            return jsonify({'error': 'No guess to validate'}), 400
-        guess = current_guess['guess']
-        guesser = current_guess['player']
-
-        turn_data = {
+    # Store guess in currentGuess and change phase
+    game_ref.update({
+        'currentGuess': {
             'guess': guess,
-            'correct_digits': correct_digits,
-            'correct_positions': correct_positions
-        }
-        # Add turn to the correct player's turns
-        if guesser == 'player1':
-            player1_turns = game_data.get('player1Turns', [])
-            player1_turns.append(turn_data)
-            update_data = {'player1Turns': player1_turns}
-        else:
-            player2_turns = game_data.get('player2Turns', [])
-            player2_turns.append(turn_data)
-            update_data = {'player2Turns': player2_turns}
+            'player': player
+        },
+        'gamePhase': 'player2Validating' if player == 'player1' else 'player1Validating'
+    })
+    return jsonify({'message': 'Guess submitted, waiting for validation'}), 200
 
-        # Check for win
-        if correct_digits == 4 and correct_positions == 4:
-            update_data['gameStatus'] = 'finished'
-            update_data['gamePhase'] = 'finished'
+# --- New endpoint: validate_guess ---
+@app.route('/validate_guess/<game_id>', methods=['POST'])
+def validate_guess(game_id):
+    correct_digits = request.json.get('correct_digits')
+    correct_positions = request.json.get('correct_positions')
+    validator = request.json.get('player')  # The player who is validating
+    game_ref = db.collection('games').document(game_id)
+    game = game_ref.get()
+    if not game.exists:
+        return jsonify({'error': 'Game not found'}), 404
+    game_data = game.to_dict()
+    if game_data['gameStatus'] != 'ongoing':
+        return jsonify({'error': 'Game has already finished'}), 400
+
+    # Check phase
+    if (validator == 'player2' and game_data['gamePhase'] != 'player2Validating') or (validator == 'player1' and game_data['gamePhase'] != 'player1Validating'):
+        return jsonify({'error': 'Not your turn to validate'}), 400
+
+    # Get the guess
+    current_guess = game_data.get('currentGuess')
+    if not current_guess:
+        return jsonify({'error': 'No guess to validate'}), 400
+    guess = current_guess['guess']
+    guesser = current_guess['player']
+
+    turn_data = {
+        'guess': guess,
+        'correct_digits': correct_digits,
+        'correct_positions': correct_positions
+    }
+    # Add turn to the correct player's turns
+    if guesser == 'player1':
+        player1_turns = game_data.get('player1Turns', [])
+        player1_turns.append(turn_data)
+        update_data = {'player1Turns': player1_turns}
+    else:
+        player2_turns = game_data.get('player2Turns', [])
+        player2_turns.append(turn_data)
+        update_data = {'player2Turns': player2_turns}
+
+    # Check for win
+    if correct_digits == 4 and correct_positions == 4:
+        update_data['gameStatus'] = 'finished'
+        update_data['gamePhase'] = 'finished'
+    else:
+        # Switch to next phase
+        if validator == 'player2':
+            update_data['gamePhase'] = 'player2Guessing'
         else:
-            # Switch to next phase
-            if validator == 'player2':
-                update_data['gamePhase'] = 'player2Guessing'
-            else:
-                update_data['gamePhase'] = 'player1Guessing'
-        update_data['currentGuess'] = None
-        game_ref.update(update_data)
-        return jsonify({'message': 'Guess validated', 'gameStatus': update_data.get('gameStatus', 'ongoing'), 'gamePhase': update_data.get('gamePhase')}), 200
+            update_data['gamePhase'] = 'player1Guessing'
+    update_data['currentGuess'] = None
+    game_ref.update(update_data)
+    return jsonify({'message': 'Guess validated', 'gameStatus': update_data.get('gameStatus', 'ongoing'), 'gamePhase': update_data.get('gamePhase')}), 200
 
 # @app.route('/game_status/<game_id>', methods=['GET'])
 # def game_status(game_id):
 #     game_ref = db.collection('games').document(game_id)
 #     game = game_ref.get()
-    
+
 #     if not game.exists:
 #         return jsonify({'error': 'Game not found'}), 404
-    
+
 #     return jsonify(game.to_dict()), 200
 
 # if __name__ == '__main__':
