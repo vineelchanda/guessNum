@@ -4,7 +4,7 @@ from google.cloud import firestore
 import random
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, origins="*")
 
 db = firestore.Client()
 
@@ -142,6 +142,8 @@ def validate_guess(game_id):
 #         return jsonify({'error': 'Game not found'}), 404
 
 #     return jsonify(game.to_dict()), 200
+
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080)
