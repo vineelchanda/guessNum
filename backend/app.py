@@ -4,7 +4,7 @@ from google.cloud import firestore
 import random
 
 app = Flask(__name__)
-CORS(app, origins="*")
+CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 
 db = firestore.Client()
 
