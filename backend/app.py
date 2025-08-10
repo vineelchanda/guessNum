@@ -17,10 +17,8 @@ def create_game():
         'player1': player_info,
         'player2': None,
         'turn': 'player1',
-        'player1Guess': None,
-        'player2Guess': None,
-        'player1GuessResult': None,
-        'player2GuessResult': None,
+        'player1Turns': [],  # Each turn: { 'guess': '1234', 'correct_digits': 0, 'correct_positions': 0 }
+        'player2Turns': [],
         'gameStatus': 'ongoing'
     }
     
@@ -50,29 +48,44 @@ def join_game(game_id):
 def make_guess(game_id):
     guess = request.json.get('guess')
     player = request.json.get('player')
-    
+    correct_digits = request.json.get('correct_digits')
+    correct_positions = request.json.get('correct_positions')
+
     game_ref = db.collection('games').document(game_id)
     game = game_ref.get()
-    
+
     if not game.exists:
         return jsonify({'error': 'Game not found'}), 404
-    
+
     game_data = game.to_dict()
-    
+
     if game_data['gameStatus'] != 'ongoing':
         return jsonify({'error': 'Game has already finished'}), 400
-    
+
+    # Add the turn to the respective player's turns array
+    turn_data = {
+        'guess': guess,
+        'correct_digits': correct_digits,
+        'correct_positions': correct_positions
+    }
     if player == 'player1':
-        game_ref.update({'player1Guess': guess})
-        game_data['player1Guess'] = guess
+        player1_turns = game_data.get('player1Turns', [])
+        player1_turns.append(turn_data)
+        game_ref.update({'player1Turns': player1_turns, 'turn': 'player2'})
+        game_data['player1Turns'] = player1_turns
         game_data['turn'] = 'player2'
     else:
-        game_ref.update({'player2Guess': guess})
-        game_data['player2Guess'] = guess
+        player2_turns = game_data.get('player2Turns', [])
+        player2_turns.append(turn_data)
+        game_ref.update({'player2Turns': player2_turns, 'turn': 'player1'})
+        game_data['player2Turns'] = player2_turns
         game_data['turn'] = 'player1'
-    
-    # Logic to validate guesses and update results would go here
-    # For now, we will just return the current game state
+
+    # Check for win condition
+    if correct_digits == 4 and correct_positions == 4:
+        game_ref.update({'gameStatus': 'finished'})
+        game_data['gameStatus'] = 'finished'
+
     return jsonify(game_data), 200
 
 @app.route('/game_status/<game_id>', methods=['GET'])

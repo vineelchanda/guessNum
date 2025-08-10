@@ -1,10 +1,13 @@
-import React from 'react';
+import React from "react";
 
-function HomePage() {
+function HomePage({ send }) {
   return (
     <div>
-      <h1>Welcome to the Python Game</h1>
-      {/* Add navigation or buttons to Create/Join */}
+      <h1>Welcome to GuessNum!</h1>
+      <button onClick={() => send({ type: "GO_TO_CREATE" })}>
+        Create Game
+      </button>
+      <button onClick={() => send({ type: "GO_TO_JOIN" })}>Join Game</button>
     </div>
   );
 }
