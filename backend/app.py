@@ -70,12 +70,16 @@ def submit_guess(game_id):
         return jsonify({'error': 'Not your turn to guess'}), 400
 
     # Store guess in currentGuess and change phase
+    # Update currentGuess, gamePhase, and turn
+    next_phase = 'player2Validating' if player == 'player1' else 'player1Validating'
+    next_turn = 'player2' if player == 'player1' else 'player1'
     game_ref.update({
         'currentGuess': {
             'guess': guess,
             'player': player
         },
-        'gamePhase': 'player2Validating' if player == 'player1' else 'player1Validating'
+        'gamePhase': next_phase,
+        'turn': next_turn
     })
     return jsonify({'message': 'Guess submitted, waiting for validation'}), 200
 
@@ -123,27 +127,18 @@ def validate_guess(game_id):
     if correct_digits == 4 and correct_positions == 4:
         update_data['gameStatus'] = 'finished'
         update_data['gamePhase'] = 'finished'
+        update_data['turn'] = None
     else:
-        # Switch to next phase
+        # Switch to next phase and update turn
         if validator == 'player2':
             update_data['gamePhase'] = 'player2Guessing'
+            update_data['turn'] = 'player2'
         else:
             update_data['gamePhase'] = 'player1Guessing'
+            update_data['turn'] = 'player1'
     update_data['currentGuess'] = None
     game_ref.update(update_data)
-    return jsonify({'message': 'Guess validated', 'gameStatus': update_data.get('gameStatus', 'ongoing'), 'gamePhase': update_data.get('gamePhase')}), 200
-
-# @app.route('/game_status/<game_id>', methods=['GET'])
-# def game_status(game_id):
-#     game_ref = db.collection('games').document(game_id)
-#     game = game_ref.get()
-
-#     if not game.exists:
-#         return jsonify({'error': 'Game not found'}), 404
-
-#     return jsonify(game.to_dict()), 200
-
-
+    return jsonify({'message': 'Guess validated', 'gameStatus': update_data.get('gameStatus', 'ongoing'), 'gamePhase': update_data.get('gamePhase'), 'turn': update_data.get('turn')}), 200
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080)
