@@ -1,4 +1,5 @@
 import { createMachine, assign } from "xstate";
+import { actions, entryActions } from "./actions";
 import * as actors from "./actors";
 import ENDPOINTS from "./endpoints";
 
@@ -21,7 +22,7 @@ function validateGuess(guess, answer) {
       guessCount[guessArr[i]] = (guessCount[guessArr[i]] || 0) + 1;
     }
   }
-  // Second pass: count correct digits (excluding already matched positions)
+  // Seguard pass: count correct digits (excluding already matched positions)
   for (const digit in guessCount) {
     if (answerCount[digit]) {
       correct_digits += Math.min(guessCount[digit], answerCount[digit]);
@@ -32,9 +33,23 @@ function validateGuess(guess, answer) {
   return { correct_digits, correct_positions };
 }
 
+function getInitialPageFromPath() {
+  if (
+    typeof window !== "undefined" &&
+    window.location &&
+    window.location.pathname
+  ) {
+    const path = window.location.pathname;
+    if (path.startsWith("/create")) return "create";
+    if (path.startsWith("/join")) return "join";
+    if (path.startsWith("/game")) return "game";
+  }
+  return "home";
+}
+
 const gameMachine = createMachine({
   id: "game",
-  initial: "home",
+  initial: "determiningInitialPage",
   context: {
     gameData: null,
     loading: false,
@@ -49,6 +64,17 @@ const gameMachine = createMachine({
     isMyTurn: false,
   },
   states: {
+    determiningInitialPage: {
+      always: [
+        {
+          target: "create",
+          guard: () => getInitialPageFromPath() === "create",
+        },
+        { target: "join", guard: () => getInitialPageFromPath() === "join" },
+        { target: "game", guard: () => getInitialPageFromPath() === "game" },
+        { target: "home" },
+      ],
+    },
     home: {
       id: "home",
       on: {
@@ -64,18 +90,12 @@ const gameMachine = createMachine({
           on: {
             CREATE_GAME: {
               target: "creating",
-              actions: assign(({ context, event }) => {
-                console.log(context, event, "evt");
-                return {
-                  playerInfo: event.playerInfo,
-                  error: null,
-                };
-              }),
+              actions: actions.assignCreateGame,
             },
           },
         },
         creating: {
-          entry: assign({ loading: (_) => true, error: (_) => null }),
+          entry: entryActions.setLoading,
           invoke: {
             id: "createGame",
             src: "createGame",
@@ -84,9 +104,17 @@ const gameMachine = createMachine({
               target: "success",
               actions: assign({
                 gameId: ({ context, event }) => {
-                  console.log(event);
+                  // Redirect to /game/:gameId/1 after creation
+                  if (typeof window !== "undefined" && event.output?.game_id) {
+                    window.history.replaceState(
+                      {},
+                      "",
+                      `/game/${event.output.game_id}/1`
+                    );
+                  }
                   return event.output.game_id;
                 },
+                playerNum: () => "1",
                 loading: ({ context, event }) => false,
                 error: ({ context, event }) => null,
               }),
@@ -126,16 +154,12 @@ const gameMachine = createMachine({
           on: {
             JOIN_GAME: {
               target: "joining",
-              actions: assign(({ context, event }) => ({
-                gameId: event.gameId,
-                playerInfo: event.playerInfo,
-                error: null,
-              })),
+              actions: actions.assignJoinGame,
             },
           },
         },
         joining: {
-          entry: assign({ loading: (_) => true, error: (_) => null }),
+          entry: entryActions.setLoading,
           invoke: {
             id: "joinGame",
             src: "joinGame",
@@ -148,6 +172,18 @@ const gameMachine = createMachine({
               actions: assign({
                 loading: ({ context, event }) => false,
                 error: ({ context, event }) => null,
+                playerNum: () => "2",
+                gameId: ({ context, event }) => {
+                  // Redirect to /game/:gameId/2 after joining
+                  if (typeof window !== "undefined" && context.gameId) {
+                    window.history.replaceState(
+                      {},
+                      "",
+                      `/game/${context.gameId}/2`
+                    );
+                  }
+                  return context.gameId;
+                },
               }),
             },
             onError: {
@@ -180,100 +216,38 @@ const gameMachine = createMachine({
     game: {
       id: "game",
       initial: "idle",
+      entry: assign(({ context }) => {
+        if (
+          (!context.gameId || !context.playerNum) &&
+          typeof window !== "undefined" &&
+          window.location &&
+          window.location.pathname
+        ) {
+          // Support /game/:gameId or /game/:gameId/:playerNum
+          const match = window.location.pathname.match(
+            /\/game\/(\w+)(?:\/(\d))?/
+          );
+          if (match && match[1]) {
+            return { ...context, gameId: match[1], playerNum: match[2] };
+          }
+        }
+        return context;
+      }),
       states: {
         idle: {
           on: {
             MAKE_GUESS: {
               target: "makingGuess",
-              actions: assign(({ context, event }) => ({
-                guess: event.guess,
-                player: event.player,
-                correct_digits: event.correct_digits,
-                correct_positions: event.correct_positions,
-                error: null,
-              })),
+              actions: actions.assignMakeGuess,
             },
             FETCH_STATUS: "fetchingStatus",
             GAME_DATA_CHANGED: {
-              actions: assign(({ context, event }) => {
-                const gameData = event.data;
-                const playerInfo = context.playerInfo;
-                let playerRole = null;
-                let isMyTurn = false;
-                if (playerInfo && playerInfo.name) {
-                  if (gameData?.player1?.name === playerInfo.name)
-                    playerRole = "player1";
-                  else if (gameData?.player2?.name === playerInfo.name)
-                    playerRole = "player2";
-                  if (
-                    (gameData?.turn === "player1" &&
-                      gameData?.player1?.name === playerInfo.name) ||
-                    (gameData?.turn === "player2" &&
-                      gameData?.player2?.name === playerInfo.name)
-                  ) {
-                    isMyTurn = true;
-                  }
-                }
-
-                // --- Guess validation logic ---
-                // If phase is player1Validating or player2Validating and this player is the validator
-                const phase = gameData?.gamePhase;
-                const currentGuess = gameData?.currentGuess;
-                let shouldValidate = false;
-                let validator = null;
-                let answer = null;
-                if (
-                  (phase === "player1Validating" && playerRole === "player1") ||
-                  (phase === "player2Validating" && playerRole === "player2")
-                ) {
-                  shouldValidate = true;
-                  validator = playerRole;
-                  // Get the validator's secret number
-                  // answer = gameData?.currentGuess?.guess;
-                  if (playerRole === "player1") {
-                    answer = gameData?.player1.number;
-                  } else if (playerRole === "player2") {
-                    answer = gameData?.player2.number;
-                  }
-                }
-
-                if (shouldValidate && currentGuess && answer) {
-                  // Validate guess
-                  const { correct_digits, correct_positions } = validateGuess(
-                    currentGuess.guess,
-                    answer
-                  );
-                  // Send result to backend
-                  // Use ENDPOINTS.VALIDATE_GUESS from endpoints.js
-                  fetch(ENDPOINTS.VALIDATE_GUESS(context.gameId), {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                      correct_digits,
-                      correct_positions,
-                      player: validator,
-                    }),
-                  })
-                    .then((res) => res.json())
-                    .then((data) => {
-                      // Optionally, trigger a status fetch or update UI
-                    })
-                    .catch((err) => {
-                      // Optionally, handle error
-                    });
-                }
-
-                return {
-                  gameData,
-                  playerRole,
-                  isMyTurn,
-                };
-              }),
+              actions: actions.assignGameDataChanged,
             },
           },
         },
         makingGuess: {
-          entry: assign({ loading: (_) => true, error: (_) => null }),
+          entry: entryActions.setLoading,
           invoke: {
             id: "makeGuess",
             src: "makeGuess",
@@ -308,7 +282,7 @@ const gameMachine = createMachine({
           },
         },
         fetchingStatus: {
-          entry: assign({ loading: (_) => true, error: (_) => null }),
+          entry: entryActions.setLoading,
           invoke: {
             id: "getGameStatus",
             src: "getGameStatus",

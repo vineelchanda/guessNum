@@ -17,8 +17,13 @@ function AppRoutes({ state, send }) {
     if (state.matches("home")) navigate("/");
     if (state.matches("create")) navigate("/create");
     if (state.matches("join")) navigate("/join");
-    if (state.matches("game") && state.context.gameId)
-      navigate(`/game/${state.context.gameId}`);
+    if (state.matches("game") && state.context.gameId) {
+      // If playerNum is set in context, use it in the URL
+      const playerNum = state.context.playerNum || "";
+      navigate(
+        `/game/${state.context.gameId}${playerNum ? `/${playerNum}` : ""}`
+      );
+    }
   }, [state, navigate]);
 
   return (
@@ -47,7 +52,7 @@ function AppRoutes({ state, send }) {
         }
       />
       <Route
-        path="/game/:gameId"
+        path="/game/:gameId/:playerNum?"
         element={<GamePage send={send} state={state} />}
       />
     </Routes>

@@ -3,6 +3,13 @@ import { listenToGame } from "../../utils";
 
 function GamePage({ send, state }) {
   const [guess, setGuess] = useState("");
+  const [pin, setPin] = useState(["", "", "", ""]);
+  const pinRefs = [
+    React.useRef(),
+    React.useRef(),
+    React.useRef(),
+    React.useRef(),
+  ];
   const { gameId, playerRole, isMyTurn, gameData, playerInfo } = state.context;
   // Timer state
   const [timeLeft, setTimeLeft] = useState(0);
@@ -36,15 +43,42 @@ function GamePage({ send, state }) {
     return () => clearInterval(interval);
   }, [gameData?.expireAt]);
 
+  const handlePinChange = (idx, val) => {
+    if (!/^[0-9]?$/.test(val)) return; // Only allow single digit
+    const newPin = [...pin];
+    newPin[idx] = val;
+    setPin(newPin);
+    if (val && idx < 3) {
+      pinRefs[idx + 1].current?.focus();
+    }
+    if (!val && idx > 0) {
+      pinRefs[idx - 1].current?.focus();
+    }
+  };
+
+  const handlePinKeyDown = (idx, e) => {
+    if (e.key === "Backspace" && !pin[idx] && idx > 0) {
+      pinRefs[idx - 1].current?.focus();
+    }
+    if (e.key === "ArrowLeft" && idx > 0) {
+      pinRefs[idx - 1].current?.focus();
+    }
+    if (e.key === "ArrowRight" && idx < 3) {
+      pinRefs[idx + 1].current?.focus();
+    }
+  };
+
   const handleGuess = (e) => {
     e.preventDefault();
-    // Send MAKE_GUESS event to state machine
+    const pinValue = pin.join("");
+    if (pinValue.length !== 4) return;
     send({
       type: "MAKE_GUESS",
-      guess,
+      guess: pinValue,
       player: playerRole,
     });
-    setGuess("");
+    setPin(["", "", "", ""]);
+    pinRefs[0].current?.focus();
   };
 
   // Determine player names and turn info from gameData
@@ -81,8 +115,8 @@ function GamePage({ send, state }) {
   // Get selected numbers
   const myNumber =
     playerRole === "player1"
-      ? gameData?.player1.number
-      : gameData?.player2.number;
+      ? gameData?.player1?.number
+      : gameData?.player2?.number;
   // const opponentNumber =
   //   playerRole === "player1"
   //     ? gameData?.player2FourDigit
@@ -139,10 +173,109 @@ function GamePage({ send, state }) {
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "flex-start",
-        padding: "40px 0",
+        padding: "40px 20px",
         boxSizing: "border-box",
       }}
     >
+      {/* Game ID display and copy */}
+      <div
+        style={{
+          background: "#fff",
+          borderRadius: 8,
+          boxShadow: "0 2px 8px #0001",
+          padding: "10px 18px",
+          marginBottom: 18,
+          display: "flex",
+          alignItems: "center",
+          gap: 10,
+          fontWeight: 600,
+          fontSize: 18,
+          maxWidth: 340,
+          width: "100%",
+          justifyContent: "center",
+        }}
+      >
+        Game ID:
+        <span
+          style={{
+            fontFamily: "monospace",
+            fontWeight: 700,
+            fontSize: 18,
+            background: "#f3f3f3",
+            padding: "2px 8px",
+            borderRadius: 4,
+          }}
+        >
+          {gameId || "-"}
+        </span>
+        <button
+          style={{
+            marginLeft: 8,
+            padding: "2px 10px",
+            borderRadius: 4,
+            border: "none",
+            background: "#e0eafc",
+            cursor: "pointer",
+            fontWeight: 500,
+          }}
+          onClick={() => {
+            if (gameId) {
+              navigator.clipboard.writeText(gameId);
+            }
+          }}
+        >
+          Copy
+        </button>
+      </div>
+
+      {/* Waiting for player2 message */}
+      {gameData?.gameStatus === "waiting_for_player2" && (
+        <div
+          style={{
+            background: "#fffbe7",
+            color: "#bfa100",
+            border: "1px solid #ffe066",
+            borderRadius: 8,
+            padding: "12px 20px",
+            marginBottom: 18,
+            fontWeight: 600,
+            fontSize: 18,
+            textAlign: "center",
+            maxWidth: 400,
+          }}
+        >
+          Waiting for the other player to join...
+        </div>
+      )}
+      {/* Responsive styles for Game page */}
+      <style>{`
+        @media (max-width: 900px) {
+          .game-flex-row {
+            flex-direction: column !important;
+            gap: 18px !important;
+            align-items: stretch !important;
+            max-width: 98vw !important;
+          }
+          .game-panel {
+            min-width: 0 !important;
+            width: 100% !important;
+            margin-bottom: 12px !important;
+          }
+        }
+        @media (max-width: 600px) {
+          .game-flex-row {
+            padding: 0 2vw !important;
+            gap: 10px !important;
+          }
+          .game-panel {
+            padding: 10px 4px !important;
+            font-size: 0.97rem !important;
+          }
+          .game-center {
+            padding: 10px 2px !important;
+          }
+        }
+      `}</style>
       {/* Winner/loser message at the top */}
       {isFinished && (
         <div
@@ -188,6 +321,7 @@ function GamePage({ send, state }) {
         </div>
       )}
       <div
+        className="game-flex-row"
         style={{
           display: "flex",
           flexDirection: "row",
@@ -200,6 +334,7 @@ function GamePage({ send, state }) {
       >
         {/* Left: Current Player */}
         <div
+          className="game-panel"
           style={{
             flex: 1,
             border: "2px solid #4caf50",
@@ -240,6 +375,7 @@ function GamePage({ send, state }) {
 
         {/* Center: Game Info */}
         <div
+          className="game-center"
           style={{ flex: 0.5, minWidth: 180, textAlign: "center", padding: 16 }}
         >
           <h2>Game In Progress</h2>
@@ -295,33 +431,65 @@ function GamePage({ send, state }) {
               {formatTime(timeLeft)}
             </span>
           </div>
-          <form onSubmit={handleGuess} style={{ marginBottom: 16 }}>
-            <input
-              type="text"
-              placeholder="Enter 4-digit guess"
-              value={guess}
-              onChange={(e) => setGuess(e.target.value)}
-              maxLength={4}
-              required
-              disabled={!isMyTurn}
-              style={{
-                fontSize: 18,
-                padding: "4px 8px",
-                borderRadius: 4,
-                border: "1px solid #aaa",
-                marginRight: 8,
-              }}
-            />
+          <form
+            onSubmit={handleGuess}
+            style={{
+              marginBottom: 16,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: 8,
+            }}
+            autoComplete="off"
+          >
+            <div style={{ display: "flex", gap: 8, marginBottom: 8 }}>
+              {pin.map((digit, idx) => (
+                <input
+                  key={idx}
+                  ref={pinRefs[idx]}
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  maxLength={1}
+                  value={digit}
+                  onChange={(e) => handlePinChange(idx, e.target.value)}
+                  onKeyDown={(e) => handlePinKeyDown(idx, e)}
+                  disabled={!isMyTurn}
+                  style={{
+                    width: 36,
+                    height: 44,
+                    fontSize: 28,
+                    textAlign: "center",
+                    border: "1px solid #aaa",
+                    borderRadius: 6,
+                    background: isMyTurn ? "#fff" : "#f3f3f3",
+                    outline: "none",
+                    fontWeight: 600,
+                    letterSpacing: 2,
+                    transition: "border 0.2s",
+                  }}
+                  autoComplete="off"
+                  name={`pin-${idx}`}
+                />
+              ))}
+            </div>
             <button
               type="submit"
-              disabled={!isMyTurn}
+              disabled={!isMyTurn || pin.join("").length !== 4}
               style={{
                 fontSize: 16,
-                padding: "4px 12px",
+                padding: "8px 16px",
                 borderRadius: 4,
-                background: isMyTurn ? "#4caf50" : "#ccc",
+                background:
+                  isMyTurn && pin.join("").length === 4 ? "#4caf50" : "#ccc",
                 color: "white",
                 border: "none",
+                fontWeight: 600,
+                cursor:
+                  isMyTurn && pin.join("").length === 4
+                    ? "pointer"
+                    : "not-allowed",
+                transition: "background 0.2s",
               }}
             >
               Submit Guess
@@ -344,6 +512,7 @@ function GamePage({ send, state }) {
 
         {/* Right: Opponent */}
         <div
+          className="game-panel"
           style={{
             flex: 1,
             border: "2px solid #1976d2",
