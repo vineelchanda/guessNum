@@ -33,7 +33,7 @@ function JoinGamePage({ send }) {
         justifyContent: "center",
         background: "linear-gradient(135deg, #fffbe7 0%, #ffe066 100%)",
         padding: 0,
-        fontFamily: 'Segoe UI, Roboto, Arial, sans-serif',
+        fontFamily: "Segoe UI, Roboto, Arial, sans-serif",
       }}
     >
       {/* Responsive styles for JoinGame page */}
@@ -73,18 +73,30 @@ function JoinGamePage({ send }) {
         }}
       >
         {/* Decorative dots pattern */}
-        <div style={{
-          position: 'absolute',
-          top: 0, left: 0, right: 0, height: 18,
-          background: 'repeating-linear-gradient(90deg, #cfdef3 0 2px, transparent 2px 16px)',
-          opacity: 0.25,
-        }} />
-        <div style={{
-          position: 'absolute',
-          bottom: 0, left: 0, right: 0, height: 18,
-          background: 'repeating-linear-gradient(90deg, #cfdef3 0 2px, transparent 2px 16px)',
-          opacity: 0.18,
-        }} />
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            height: 18,
+            background:
+              "repeating-linear-gradient(90deg, #cfdef3 0 2px, transparent 2px 16px)",
+            opacity: 0.25,
+          }}
+        />
+        <div
+          style={{
+            position: "absolute",
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: 18,
+            background:
+              "repeating-linear-gradient(90deg, #cfdef3 0 2px, transparent 2px 16px)",
+            opacity: 0.18,
+          }}
+        />
         <h2
           style={{
             fontWeight: 800,
