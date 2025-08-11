@@ -287,7 +287,7 @@ const gameMachine = createMachine({
             onDone: {
               target: "idle",
               actions: assign({
-                gameData: ({ context, event }) => event.output,
+                // gameData: ({ context, event }) => event.output,
                 loading: ({ context, event }) => false,
                 error: ({ context, event }) => null,
                 correct_digits: ({ context, event }) => null,
