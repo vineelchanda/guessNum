@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { listenToGame } from "../../utils";
+import ScratchPad from "./ScratchPad";
 
 function GamePage({ send, state }) {
   const [guess, setGuess] = useState("");
@@ -173,7 +174,7 @@ function GamePage({ send, state }) {
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "flex-start",
-        padding: "40px 20px",
+        padding: "20px 20px",
         boxSizing: "border-box",
       }}
     >
@@ -184,7 +185,7 @@ function GamePage({ send, state }) {
           borderRadius: 8,
           boxShadow: "0 2px 8px #0001",
           padding: "10px 18px",
-          marginBottom: 18,
+          // marginBottom: 18,
           display: "flex",
           alignItems: "center",
           gap: 10,
@@ -227,7 +228,16 @@ function GamePage({ send, state }) {
           Copy
         </button>
       </div>
-
+      <div
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          marginBottom: 10,
+        }}
+      >
+        <ScratchPad />
+      </div>
       {/* Waiting for player2 message */}
       {gameData?.gameStatus === "waiting_for_player2" && (
         <div
@@ -435,6 +445,7 @@ function GamePage({ send, state }) {
             onSubmit={handleGuess}
             style={{
               marginBottom: 16,
+              marginTop: 18,
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
