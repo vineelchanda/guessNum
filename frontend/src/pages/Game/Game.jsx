@@ -168,7 +168,7 @@ function GamePage({ send, state }) {
       style={{
         minHeight: "100vh",
         width: "100vw",
-        background: "linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%)",
+        background: "linear-gradient(135deg, #fffbe7 0%, #ffe066 100%)",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",

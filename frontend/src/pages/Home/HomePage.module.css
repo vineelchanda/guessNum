@@ -5,7 +5,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%);
+  background: linear-gradient(135deg, #fffbe7 0%, #ffe066 100%);
   color: #222;
   font-family: "Segoe UI", "Roboto", "Arial", sans-serif;
   padding: 0 1rem 2rem 1rem;
@@ -186,6 +186,7 @@
 .button:hover,
 .buttonActive {
   background: linear-gradient(90deg, #ffd200 0%, #f7971e 100%);
+  color: #222;
   transform: scale(1.05);
   box-shadow: 0 4px 16px #f7971e77;
 }
