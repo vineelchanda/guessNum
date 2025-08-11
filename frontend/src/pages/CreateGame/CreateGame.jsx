@@ -2,13 +2,14 @@ import React, { useState } from "react";
 
 function CreateGamePage({ send, loading, error }) {
   const [playerName, setPlayerName] = useState("");
+  const [fourDigit, setFourDigit] = useState("");
 
   const handleCreate = (e) => {
     e.preventDefault();
-    console.log(playerName);
+    console.log(playerName, fourDigit);
     send({
       type: "CREATE_GAME",
-      playerInfo: { name: playerName },
+      playerInfo: { name: playerName, fourDigit },
     });
   };
 
@@ -21,6 +22,17 @@ function CreateGamePage({ send, loading, error }) {
           placeholder="Your Name"
           value={playerName}
           onChange={(e) => setPlayerName(e.target.value)}
+          required
+        />
+        <input
+          type="text"
+          placeholder="4-digit Number"
+          value={fourDigit}
+          onChange={(e) => {
+            const val = e.target.value;
+            if (/^\d{0,4}$/.test(val)) setFourDigit(val);
+          }}
+          maxLength={4}
           required
         />
         <button type="submit" disabled={loading}>

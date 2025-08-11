@@ -3,10 +3,11 @@ import ENDPOINTS from "./endpoints";
 import { fromPromise } from "xstate";
 
 export const createGame = fromPromise(async ({ input }) => {
+  const { name, fourDigit } = input.playerInfo;
   const response = await fetch(ENDPOINTS.CREATE_GAME, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ player_info: input.playerInfo }),
+    body: JSON.stringify({ player_info: { name, number: fourDigit } }),
   });
   if (!response.ok) {
     const error = await response.json();
@@ -17,10 +18,11 @@ export const createGame = fromPromise(async ({ input }) => {
 });
 
 export const joinGame = fromPromise(async ({ input }) => {
+  const { name, fourDigit } = input.playerInfo;
   const response = await fetch(ENDPOINTS.JOIN_GAME(input.gameId), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ player_info: input.playerInfo }),
+    body: JSON.stringify({ player_info: { name, number: fourDigit } }),
   });
   if (!response.ok) {
     const error = await response.json();

@@ -16,7 +16,8 @@ function AppRoutes({ state, send }) {
     if (state.matches("home")) navigate("/");
     if (state.matches("create")) navigate("/create");
     if (state.matches("join")) navigate("/join");
-    if (state.matches("game")) navigate("/game/1234"); // Replace 1234 with actual gameId as needed
+    if (state.matches("game") && state.context.gameId)
+      navigate(`/game/${state.context.gameId}`);
   }, [state, navigate]);
 
   return (

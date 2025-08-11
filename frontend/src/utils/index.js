@@ -1,4 +1,4 @@
-import { db } from "./firebase";
+import { db } from "../firebase";
 import { doc, onSnapshot } from "firebase/firestore";
 
 // Listen to a document for real-time updates
