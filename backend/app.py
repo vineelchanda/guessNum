@@ -24,7 +24,7 @@ def create_game():
         'turn': 'player1',
         'player1Turns': [],  # Each turn: { 'guess': '1234', 'correct_digits': 0, 'correct_positions': 0 }
         'player2Turns': [],
-        'gameStatus': 'ongoing',
+        'gameStatus': 'waiting_for_player2',
         'expireAt': expire_at,
         'gamePhase': 'player1Guessing',  # or similar initial phase
         'currentGuess': None,  
@@ -49,7 +49,7 @@ def join_game(game_id):
     if game_data['player2'] is not None:
         return jsonify({'error': 'Game already has two players'}), 400
 
-    game_ref.update({'player2': player_info, 'player2FourDigit': player2FourDigit})
+    game_ref.update({'player2': player_info, 'player2FourDigit': player2FourDigit, 'gameStatus': 'ongoing'})
 
     return jsonify({'message': 'Joined game successfully'}), 200
     
