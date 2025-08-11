@@ -1,0 +1,191 @@
+.homePage {
+  min-height: 100vh;
+  min-width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%);
+  color: #222;
+  font-family: "Segoe UI", "Roboto", "Arial", sans-serif;
+  padding: 0 1rem 2rem 1rem;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+@media (max-width: 600px) {
+  .homePage {
+    padding: 1.2rem 0.5rem 2rem 0.5rem;
+  }
+  .heading {
+    font-size: 2rem;
+    margin-bottom: 0.7rem;
+    margin-top: 0.5rem;
+  }
+  .subText {
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+    max-width: 98vw;
+    padding: 0.5rem 0.2rem 0.5rem 0.2rem;
+  }
+  .actionContainer {
+    max-width: 98vw;
+    gap: 1.5rem;
+    margin-top: 1.2rem;
+    margin-bottom: 1.2rem;
+  }
+  .card {
+    padding: 1.5rem 0.7rem 1.2rem 0.7rem;
+    border-radius: 12px;
+    margin-bottom: 1.2rem;
+  }
+  .cardTitle {
+    font-size: 1.1rem;
+    margin-bottom: 0.7rem;
+  }
+  .cardDesc {
+    margin-bottom: 0.7rem;
+  }
+  .button {
+    font-size: 1rem;
+    padding: 0.8rem 1.4rem;
+    margin-top: 1rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .subText {
+    font-size: 0.95rem;
+    padding: 0 2px;
+  }
+  .cardDesc {
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 900px) and (min-width: 601px) {
+  .homePage {
+    padding: 0 0.5rem 2rem 0.5rem;
+  }
+  .heading {
+    font-size: 2.2rem;
+  }
+  .subText {
+    font-size: 1.1rem;
+    max-width: 90vw;
+  }
+  .actionContainer {
+    max-width: 90vw;
+  }
+  .card {
+    padding: 1.5rem 1rem 1rem 1rem;
+    border-radius: 12px;
+  }
+  .cardTitle {
+    font-size: 1.2rem;
+  }
+  .button {
+    font-size: 1.05rem;
+    padding: 0.75rem 1.7rem;
+  }
+}
+
+.heading {
+  font-size: 2.8rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  letter-spacing: 1px;
+  text-shadow: 1px 2px 8px #fff7, 0 2px 8px #f7971e55;
+}
+
+.subText {
+  font-size: 1.2rem;
+  margin-bottom: 2.5rem;
+  color: #444;
+  text-align: center;
+  max-width: 500px;
+}
+
+.brand {
+  color: #1a237e;
+  font-weight: 700;
+}
+
+.exciting {
+  color: #d72660;
+  font-weight: 700;
+  text-shadow: 0 1px 8px #fff8;
+}
+
+.secret {
+  color: #1a237e;
+  font-weight: 700;
+}
+
+.challenge {
+  color: #d72660;
+  font-weight: 700;
+}
+
+.ready {
+  color: #fff;
+  font-weight: 700;
+  background: linear-gradient(90deg, #7a8fa6 0%, #b97a95 100%);
+  padding: 0 0.4em;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px #b97a9555;
+  display: inline-block;
+}
+
+.actionContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  width: 100%;
+  max-width: 400px;
+  margin-bottom: 2rem;
+  margin-top: 1.5rem;
+  flex-shrink: 0;
+}
+
+.card {
+  background: #fff8;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px #0002;
+  padding: 2rem 1.5rem 1.5rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.cardTitle {
+  margin: 0;
+  font-size: 1.4rem;
+  color: #f7971e;
+}
+
+.cardDesc {
+  color: #444;
+  margin-top: 8px;
+  text-align: center;
+}
+
+.button {
+  background: linear-gradient(90deg, #f7971e 0%, #ffd200 100%);
+  color: #222;
+  border: none;
+  border-radius: 8px;
+  padding: 0.8rem 2.2rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 8px #f7971e55;
+  transition: transform 0.1s, box-shadow 0.1s, background 0.2s;
+  margin-top: 1rem;
+}
+
+.button:hover,
+.buttonActive {
+  background: linear-gradient(90deg, #ffd200 0%, #f7971e 100%);
+  transform: scale(1.05);
+  box-shadow: 0 4px 16px #f7971e77;
+}

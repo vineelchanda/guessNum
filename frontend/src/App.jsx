@@ -6,6 +6,7 @@ import CreateGamePage from "./pages/CreateGame";
 import JoinGamePage from "./pages/JoinGame";
 import GamePage from "./pages/Game";
 import gameMachine from "./machine";
+import "./App.css";
 import { db } from "./firebase"; // Import Firebase app and db if needed
 
 function AppRoutes({ state, send }) {
