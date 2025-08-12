@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 
-function CreateGamePage({ send, loading, error }) {
+function CreateGamePage({ send, loading, error, state }) {
   const [playerName, setPlayerName] = useState("");
   const [fourDigit, setFourDigit] = useState("");
   const [infoMsg, setInfoMsg] = useState("");
+  
+  const isSystemGame = state?.context?.isSystemGame || false;
 
   const isUniqueDigits = (num) => {
     return new Set(num).size === num.length;
@@ -104,19 +106,36 @@ function CreateGamePage({ send, loading, error }) {
             letterSpacing: 1,
           }}
         >
-          Create a New Game
+          {isSystemGame ? "Play vs System" : "Create a New Game"}
         </h2>
         <div style={{ color: "#555", marginBottom: 18, fontSize: 16 }}>
-          Ready to challenge your friends? <br />
-          Enter your name and a secret 4-digit number to start a new game.
-          <br />
-          <span style={{ color: "#bfa100", fontWeight: 600 }}>
-            All digits must be unique!
-          </span>
-          <br />
-          <span style={{ color: "#1976d2", fontWeight: 500 }}>
-            Share the Game ID with your friend after creating the game!
-          </span>
+          {isSystemGame ? (
+            <>
+              Challenge the AI system to a guessing game! <br />
+              Enter your name and a secret 4-digit number.
+              <br />
+              <span style={{ color: "#bfa100", fontWeight: 600 }}>
+                All digits must be unique!
+              </span>
+              <br />
+              <span style={{ color: "#1976d2", fontWeight: 500 }}>
+                The system will automatically join and play against you!
+              </span>
+            </>
+          ) : (
+            <>
+              Ready to challenge your friends? <br />
+              Enter your name and a secret 4-digit number to start a new game.
+              <br />
+              <span style={{ color: "#bfa100", fontWeight: 600 }}>
+                All digits must be unique!
+              </span>
+              <br />
+              <span style={{ color: "#1976d2", fontWeight: 500 }}>
+                Share the Game ID with your friend after creating the game!
+              </span>
+            </>
+          )}
         </div>
         <form
           onSubmit={handleCreate}
@@ -209,7 +228,7 @@ function CreateGamePage({ send, loading, error }) {
               letterSpacing: "0.5px",
             }}
           >
-            {loading ? "Creating..." : "Create Game"}
+            {loading ? "Creating..." : (isSystemGame ? "Start vs System" : "Create Game")}
           </button>
         </form>
         {error && <div style={{ color: "red", marginTop: 10 }}>{error}</div>}
