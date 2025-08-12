@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, redirect
 from flask_cors import CORS
 from google.cloud import firestore
 import random
@@ -396,6 +396,13 @@ def game_status(game_id):
     
     game_data = game.to_dict()
     return jsonify(game_data), 200
+
+# Catch-all route to redirect GET requests to frontend
+@app.route('/', defaults={'path': ''}, methods=['GET'])
+@app.route('/<path:path>', methods=['GET'])
+def redirect_to_frontend(path):
+    """Redirect all GET requests to the frontend URL"""
+    return redirect('https://guessnum-frontend-975779030831.asia-south1.run.app/', code=302)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080)
