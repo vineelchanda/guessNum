@@ -1,5 +1,10 @@
 service-account.json
 
+# Environment files
+.env
+.env.local
+.env.production
+
 # Python virtual environments
 venv/
 backend/venv/

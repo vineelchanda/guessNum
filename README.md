@@ -52,7 +52,7 @@ To build and run the backend in a Docker container:
    ```
 3. Run the Docker container:
    ```
-   docker run -p 5000:5000 python-game-app
+   docker run -p 8080:8080 python-game-app
    ```
 
 ## Contributing
