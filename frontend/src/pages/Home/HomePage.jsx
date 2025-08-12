@@ -18,6 +18,26 @@ function HomePage({ send }) {
       </div>
       <div className={styles.actionContainer}>
         <div className={styles.card}>
+          <h2 className={styles.cardTitle}>Daily Challenge</h2>
+          <div className={styles.cardDesc}>
+            Try to guess today's secret number!
+            <br />
+            A new challenge every day. Test your skills and see how quickly you can solve it.
+          </div>
+          <button
+            className={
+              hovered === "daily"
+                ? `${styles.button} ${styles.buttonActive}`
+                : styles.button
+            }
+            onMouseEnter={() => setHovered("daily")}
+            onMouseLeave={() => setHovered("")}
+            onClick={() => send({ type: "GO_TO_DAILY_CHALLENGE" })}
+          >
+            Daily Challenge
+          </button>
+        </div>
+        <div className={styles.card}>
           <h2 className={styles.cardTitle}>Create Game</h2>
           <div className={styles.cardDesc}>
             Start a new game and become the host!
