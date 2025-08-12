@@ -62,6 +62,7 @@ const gameMachine = createMachine({
     correct_positions: null,
     playerRole: null, // 'player1' | 'player2' | null
     isMyTurn: false,
+    isSystemGame: false,
   },
   states: {
     determiningInitialPage: {
@@ -78,7 +79,12 @@ const gameMachine = createMachine({
     home: {
       id: "home",
       on: {
-        GO_TO_CREATE: "create",
+        GO_TO_CREATE: {
+          target: "create",
+          actions: assign(({ context, event }) => ({
+            isSystemGame: event.isSystemGame || false,
+          })),
+        },
         GO_TO_JOIN: "join",
       },
     },
@@ -88,10 +94,17 @@ const gameMachine = createMachine({
       states: {
         idle: {
           on: {
-            CREATE_GAME: {
-              target: "creating",
-              actions: actions.assignCreateGame,
-            },
+            CREATE_GAME: [
+              {
+                target: "creatingSystem",
+                guard: ({ context }) => context.isSystemGame,
+                actions: actions.assignCreateGame,
+              },
+              {
+                target: "creating",
+                actions: actions.assignCreateGame,
+              },
+            ],
           },
         },
         creating: {
@@ -133,6 +146,44 @@ const gameMachine = createMachine({
         },
         success: {
           always: "#game",
+        },
+        creatingSystem: {
+          entry: entryActions.setLoading,
+          invoke: {
+            id: "createGameVsSystem",
+            src: "createGameVsSystem",
+            input: ({ context }) => ({ playerInfo: context.playerInfo }),
+            onDone: {
+              target: "success",
+              actions: assign({
+                gameId: ({ context, event }) => {
+                  // Redirect to /game/:gameId/1 after creation
+                  if (typeof window !== "undefined" && event.output?.game_id) {
+                    window.history.replaceState(
+                      {},
+                      "",
+                      `/game/${event.output.game_id}/1`
+                    );
+                  }
+                  return event.output.game_id;
+                },
+                playerNum: () => "1",
+                loading: ({ context, event }) => false,
+                error: ({ context, event }) => null,
+                isSystemGame: () => true,
+              }),
+            },
+            onError: {
+              target: "failure",
+              actions: assign({
+                error: ({ context, event }) =>
+                  event.output?.message ||
+                  event.output ||
+                  "Failed to create system game",
+                loading: ({ context, event }) => false,
+              }),
+            },
+          },
         },
         failure: {
           on: {

@@ -126,6 +126,7 @@ export const actions = {
       gameData,
       playerRole,
       isMyTurn,
+      isSystemGame: gameData?.isSystemGame || context.isSystemGame,
     };
   }),
 };

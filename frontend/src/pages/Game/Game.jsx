@@ -3,7 +3,6 @@ import { listenToGame } from "../../utils";
 import ScratchPad from "./ScratchPad";
 
 function GamePage({ send, state }) {
-  const [guess, setGuess] = useState("");
   const [pin, setPin] = useState(["", "", "", ""]);
   const pinRefs = [
     React.useRef(),
@@ -11,9 +10,11 @@ function GamePage({ send, state }) {
     React.useRef(),
     React.useRef(),
   ];
-  const { gameId, playerRole, isMyTurn, gameData, playerInfo } = state.context;
+  const { gameId, playerRole, isMyTurn, gameData } = state.context;
   // Timer state
   const [timeLeft, setTimeLeft] = useState(0);
+  
+  const isSystemGame = gameData?.isSystemGame || false;
 
   useEffect(() => {
     const unsubscribe = listenToGame(gameId, (data) => {
@@ -84,7 +85,7 @@ function GamePage({ send, state }) {
 
   // Determine player names and turn info from gameData
   const player1Name = gameData?.player1?.name || "Player 1";
-  const player2Name = gameData?.player2?.name || "Player 2";
+  const player2Name = isSystemGame ? "System" : (gameData?.player2?.name || "Player 2");
   const turn = gameData?.turn;
 
   // Guess history
@@ -239,7 +240,7 @@ function GamePage({ send, state }) {
         <ScratchPad />
       </div>
       {/* Waiting for player2 message */}
-      {gameData?.gameStatus === "waiting_for_player2" && (
+      {gameData?.gameStatus === "waiting_for_player2" && !isSystemGame && (
         <div
           style={{
             background: "#fffbe7",
@@ -388,7 +389,7 @@ function GamePage({ send, state }) {
           className="game-center"
           style={{ flex: 0.5, minWidth: 180, textAlign: "center", padding: 16 }}
         >
-          <h2>Game In Progress</h2>
+          <h2>{isSystemGame ? "System AI Opponent" : "Game In Progress"}</h2>
           <div
             style={{ marginBottom: 16, position: "relative", minHeight: 40 }}
           >
@@ -396,7 +397,7 @@ function GamePage({ send, state }) {
             {turn === "player1"
               ? `${player1Name} (Player 1)`
               : turn === "player2"
-              ? `${player2Name} (Player 2)`
+              ? `${player2Name}${isSystemGame ? " (AI)" : " (Player 2)"}`
               : "-"}
             {isMyTurn && (
               <span
@@ -417,6 +418,27 @@ function GamePage({ send, state }) {
                 }}
               >
                 Your Turn!
+              </span>
+            )}
+            {!isMyTurn && turn === "player2" && isSystemGame && (
+              <span
+                style={{
+                  display: "inline-block",
+                  background:
+                    "linear-gradient(90deg, #ff9800 0%, #f57c00 100%)",
+                  color: "#fff",
+                  fontWeight: 700,
+                  fontSize: 16,
+                  borderRadius: 8,
+                  padding: "4px 12px",
+                  marginLeft: 16,
+                  boxShadow: "0 2px 8px rgba(255,152,0,0.15)",
+                  border: "2px solid #f57c00",
+                  letterSpacing: 1,
+                  animation: "pulse 1.5s infinite",
+                }}
+              >
+                🤖 AI Thinking...
               </span>
             )}
           </div>
@@ -526,14 +548,16 @@ function GamePage({ send, state }) {
           className="game-panel"
           style={{
             flex: 1,
-            border: "2px solid #1976d2",
+            border: isSystemGame ? "2px solid #ff9800" : "2px solid #1976d2",
             borderRadius: 8,
             padding: 16,
-            background: "#f0f7ff",
+            background: isSystemGame ? "#fff3e0" : "#f0f7ff",
             minWidth: 280,
           }}
         >
-          <h3 style={{ color: "#1976d2" }}>{opponentName}</h3>
+          <h3 style={{ color: isSystemGame ? "#e65100" : "#1976d2" }}>
+            {opponentName} {isSystemGame ? "🤖" : ""}
+          </h3>
           {/* Opponent's number should not be shown for privacy */}
           <div style={{ marginBottom: 12 }}>
             <strong>Opponent's Number:</strong>
