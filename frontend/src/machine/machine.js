@@ -1,6 +1,5 @@
 import { createMachine, assign } from "xstate";
 import { actions, entryActions } from "./actions";
-import * as actors from "./actors";
 // import ENDPOINTS from "./endpoints";
 
 // Utility to validate guess: returns { correct_digits, correct_positions }

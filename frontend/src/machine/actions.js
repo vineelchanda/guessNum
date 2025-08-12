@@ -35,7 +35,7 @@ function validateGuess(guess, answer) {
 }
 
 export const actions = {
-  assignCreateGame: assign(({ context, event }) => {
+  assignCreateGame: assign(({ _context, event }) => {
     return {
       playerInfo: event.playerInfo,
       error: null,
