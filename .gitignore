@@ -1,1 +1,23 @@
 service-account.json
+
+# Python virtual environments
+venv/
+backend/venv/
+
+# Node.js dependencies
+node_modules/
+frontend/node_modules/
+
+# Build artifacts
+dist/
+build/
+*.pyc
+__pycache__/
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db

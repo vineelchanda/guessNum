@@ -36,7 +36,6 @@ function validateGuess(guess, answer) {
 
 export const actions = {
   assignCreateGame: assign(({ context, event }) => {
-    console.log(context, event, "evt");
     return {
       playerInfo: event.playerInfo,
       error: null,
@@ -118,8 +117,9 @@ export const actions = {
         .then(() => {
           // Optionally, trigger a status fetch or update UI
         })
-        .catch(() => {
-          // Optionally, handle error
+        .catch((error) => {
+          // Log error for debugging and potentially notify user
+          console.error('Failed to validate guess:', error);
         });
     }
 

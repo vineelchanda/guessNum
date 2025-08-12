@@ -18,7 +18,6 @@ function GamePage({ send, state }) {
 
   useEffect(() => {
     const unsubscribe = listenToGame(gameId, (data) => {
-      console.log(data, "Game data updated");
       // Trigger your XState event or any other logic
       send({ type: "GAME_DATA_CHANGED", data });
     });
