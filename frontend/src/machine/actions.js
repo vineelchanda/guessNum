@@ -1,7 +1,8 @@
 // Entry actions for loading and error
 export const entryActions = {
-  setLoading: assign({ loading: (_) => true, error: (_) => null }),
+  setLoading: assign({ loading: () => true, error: () => null }),
 };
+
 // All XState actions for the game machine
 import { assign } from "xstate";
 import ENDPOINTS from "./endpoints";
@@ -41,12 +42,12 @@ export const actions = {
       error: null,
     };
   }),
-  assignJoinGame: assign(({ context, event }) => ({
+  assignJoinGame: assign(({ event }) => ({
     gameId: event.gameId,
     playerInfo: event.playerInfo,
     error: null,
   })),
-  assignMakeGuess: assign(({ context, event }) => ({
+  assignMakeGuess: assign(({ event }) => ({
     guess: event.guess,
     player: event.player,
     correct_digits: event.correct_digits,
@@ -114,10 +115,10 @@ export const actions = {
         }),
       })
         .then((res) => res.json())
-        .then((data) => {
+        .then(() => {
           // Optionally, trigger a status fetch or update UI
         })
-        .catch((err) => {
+        .catch(() => {
           // Optionally, handle error
         });
     }

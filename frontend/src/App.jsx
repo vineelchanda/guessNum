@@ -7,11 +7,10 @@ import JoinGamePage from "./pages/JoinGame";
 import GamePage from "./pages/Game";
 import gameMachine from "./machine";
 import "./App.css";
-import { db } from "./firebase"; // Import Firebase app and db if needed
+// import { db } from "./firebase"; // Import Firebase app and db if needed
 
 function AppRoutes({ state, send }) {
   const navigate = useNavigate();
-  // console.log(db);
 
   React.useEffect(() => {
     if (state.matches("home")) navigate("/");

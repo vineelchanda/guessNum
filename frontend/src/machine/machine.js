@@ -1,37 +1,37 @@
 import { createMachine, assign } from "xstate";
 import { actions, entryActions } from "./actions";
 import * as actors from "./actors";
-import ENDPOINTS from "./endpoints";
+// import ENDPOINTS from "./endpoints";
 
 // Utility to validate guess: returns { correct_digits, correct_positions }
-function validateGuess(guess, answer) {
-  if (!guess || !answer) return { correct_digits: 0, correct_positions: 0 };
-  const guessArr = guess.toString().split("");
-  const answerArr = answer.toString().split("");
-  let correct_positions = 0;
-  let correct_digits = 0;
-  const answerCount = {};
-  const guessCount = {};
+// function validateGuess(guess, answer) {
+//   if (!guess || !answer) return { correct_digits: 0, correct_positions: 0 };
+//   const guessArr = guess.toString().split("");
+//   const answerArr = answer.toString().split("");
+//   let correct_positions = 0;
+//   let correct_digits = 0;
+//   const answerCount = {};
+//   const guessCount = {};
 
-  // First pass: count correct positions
-  for (let i = 0; i < Math.min(guessArr.length, answerArr.length); i++) {
-    if (guessArr[i] === answerArr[i]) {
-      correct_positions++;
-    } else {
-      answerCount[answerArr[i]] = (answerCount[answerArr[i]] || 0) + 1;
-      guessCount[guessArr[i]] = (guessCount[guessArr[i]] || 0) + 1;
-    }
-  }
-  // Seguard pass: count correct digits (excluding already matched positions)
-  for (const digit in guessCount) {
-    if (answerCount[digit]) {
-      correct_digits += Math.min(guessCount[digit], answerCount[digit]);
-    }
-  }
-  // Add correct_positions to correct_digits (since those are also correct digits)
-  correct_digits += correct_positions;
-  return { correct_digits, correct_positions };
-}
+//   // First pass: count correct positions
+//   for (let i = 0; i < Math.min(guessArr.length, answerArr.length); i++) {
+//     if (guessArr[i] === answerArr[i]) {
+//       correct_positions++;
+//     } else {
+//       answerCount[answerArr[i]] = (answerCount[answerArr[i]] || 0) + 1;
+//       guessCount[guessArr[i]] = (guessCount[guessArr[i]] || 0) + 1;
+//     }
+//   }
+//   // Second pass: count correct digits (excluding already matched positions)
+//   for (const digit in guessCount) {
+//     if (answerCount[digit]) {
+//       correct_digits += Math.min(guessCount[digit], answerCount[digit]);
+//     }
+//   }
+//   // Add correct_positions to correct_digits (since those are also correct digits)
+//   correct_digits += correct_positions;
+//   return { correct_digits, correct_positions };
+// }
 
 function getInitialPageFromPath() {
   if (
