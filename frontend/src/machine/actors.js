@@ -17,21 +17,6 @@ export const createGame = fromPromise(async ({ input }) => {
   return response.json();
 });
 
-export const createGameVsSystem = fromPromise(async ({ input }) => {
-  const { name, fourDigit } = input.playerInfo;
-  const response = await fetch(ENDPOINTS.CREATE_GAME_VS_SYSTEM, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ player_info: { name, number: fourDigit } }),
-  });
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || "Failed to create system game");
-  }
-
-  return response.json();
-});
-
 export const joinGame = fromPromise(async ({ input }) => {
   const { name, fourDigit } = input.playerInfo;
   const response = await fetch(ENDPOINTS.JOIN_GAME(input.gameId), {

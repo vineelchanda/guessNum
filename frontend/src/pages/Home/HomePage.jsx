@@ -39,26 +39,6 @@ function HomePage({ send }) {
           </button>
         </div>
         <div className={styles.card}>
-          <h2 className={styles.cardTitle}>Play vs System</h2>
-          <div className={styles.cardDesc}>
-            Challenge the AI system in a single-player game!
-            <br />
-            Test your skills against an intelligent computer opponent.
-          </div>
-          <button
-            className={
-              hovered === "system"
-                ? `${styles.button} ${styles.buttonActive}`
-                : styles.button
-            }
-            onMouseEnter={() => setHovered("system")}
-            onMouseLeave={() => setHovered("")}
-            onClick={() => send({ type: "GO_TO_CREATE", isSystemGame: true })}
-          >
-            Play vs System
-          </button>
-        </div>
-        <div className={styles.card}>
           <h2 className={styles.cardTitle}>Join Game</h2>
           <div className={styles.cardDesc}>
             Already have a game code? <br />
