@@ -1,6 +1,8 @@
 // src/machine/endpoints.js
 
-const BASE_URL = "https://guessnum-975779030831.asia-south1.run.app";
+const BASE_URL = process.env.NODE_ENV === 'development' 
+  ? "http://localhost:8080"  // Local development
+  : "https://guessnum-975779030831.asia-south1.run.app";  // Production
 
 export const ENDPOINTS = {
   CREATE_GAME: `${BASE_URL}/create_game`,
