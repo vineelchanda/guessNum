@@ -72,3 +72,28 @@ export const getGameStatus = fromPromise(async ({ input }) => {
   }
   return response.json();
 });
+
+export const getDailyChallenge = fromPromise(async () => {
+  const response = await fetch(ENDPOINTS.DAILY_CHALLENGE);
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || "Failed to get daily challenge");
+  }
+  return response.json();
+});
+
+export const submitDailyChallenge = fromPromise(async ({ input }) => {
+  const response = await fetch(ENDPOINTS.DAILY_CHALLENGE_SUBMIT, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      guess: input.guess,
+      player_name: input.playerName || "Anonymous",
+    }),
+  });
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || "Failed to submit daily challenge");
+  }
+  return response.json();
+});

@@ -4,6 +4,8 @@ from google.cloud import firestore
 import random
 import threading
 import time
+import datetime
+import hashlib
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
@@ -90,6 +92,79 @@ class SystemPlayer:
         self.guessed_numbers.add(str(guess).zfill(4))
 
 system_players = {}  # Store system player instances per game
+
+def get_daily_number():
+    """Generate consistent daily number based on current date"""
+    today = datetime.date.today().isoformat()
+    # Use date as seed to ensure same number for entire day
+    hash_input = f"daily_challenge_{today}"
+    hash_digest = hashlib.md5(hash_input.encode()).hexdigest()
+    # Convert first 8 chars of hash to number and mod 10000 for 4 digits
+    number = int(hash_digest[:8], 16) % 10000
+    return f"{number:04d}"
+
+@app.route('/daily_challenge', methods=['GET'])
+def get_daily_challenge():
+    """Get today's challenge number (for display/verification purposes)"""
+    daily_number = get_daily_number()
+    today = datetime.date.today().isoformat()
+    
+    return jsonify({
+        'date': today,
+        'challenge_active': True,
+        # Don't return the actual number - this would be cheating!
+        'hint': f"Today's number starts with {daily_number[0]}..."
+    }), 200
+
+@app.route('/daily_challenge/submit', methods=['POST'])
+def submit_daily_challenge():
+    """Submit a guess for today's daily challenge"""
+    data = request.json
+    guess = data.get('guess')
+    player_name = data.get('player_name', 'Anonymous')
+    
+    if not guess:
+        return jsonify({'error': 'Guess is required'}), 400
+    
+    # Get today's number
+    daily_number = get_daily_number()
+    today = datetime.date.today().isoformat()
+    
+    # Validate guess using existing logic
+    system_player = SystemPlayer()
+    result = system_player.validate_guess(guess, daily_number)
+    
+    # Store attempt in Firestore (optional - for stats/leaderboard)
+    try:
+        attempt_data = {
+            'player_name': player_name,
+            'guess': guess,
+            'date': today,
+            'correct_digits': result['correct_digits'],
+            'correct_positions': result['correct_positions'],
+            'is_winner': result['correct_digits'] == 4 and result['correct_positions'] == 4,
+            'timestamp': datetime.datetime.now(datetime.timezone.utc)
+        }
+        
+        # Store in daily_challenges collection
+        db.collection('daily_challenges').document(f"{today}_{player_name}_{int(time.time())}").set(attempt_data)
+    except Exception as e:
+        # Don't fail the request if we can't store the attempt
+        print(f"Failed to store daily challenge attempt: {e}")
+    
+    response = {
+        'guess': guess,
+        'correct_digits': result['correct_digits'],
+        'correct_positions': result['correct_positions'],
+        'is_winner': result['correct_digits'] == 4 and result['correct_positions'] == 4,
+        'date': today
+    }
+    
+    if response['is_winner']:
+        response['congratulations'] = f"Congratulations {player_name}! You guessed today's number!"
+        response['daily_number'] = daily_number  # Reveal only when won
+    
+    return jsonify(response), 200
 
 @app.route('/create_game', methods=['POST'])
 def create_game():

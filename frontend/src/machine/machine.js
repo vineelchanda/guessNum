@@ -43,6 +43,7 @@ function getInitialPageFromPath() {
     if (path.startsWith("/create")) return "create";
     if (path.startsWith("/join")) return "join";
     if (path.startsWith("/game")) return "game";
+    if (path.startsWith("/daily-challenge")) return "dailyChallenge";
   }
   return "home";
 }
@@ -63,6 +64,12 @@ const gameMachine = createMachine({
     playerRole: null, // 'player1' | 'player2' | null
     isMyTurn: false,
     isSystemGame: false,
+    // Daily challenge specific
+    dailyChallengeData: null,
+    attempts: [],
+    currentAttempt: null,
+    isWinner: false,
+    playerName: "Anonymous",
   },
   states: {
     determiningInitialPage: {
@@ -73,6 +80,7 @@ const gameMachine = createMachine({
         },
         { target: "join", guard: () => getInitialPageFromPath() === "join" },
         { target: "game", guard: () => getInitialPageFromPath() === "game" },
+        { target: "dailyChallenge", guard: () => getInitialPageFromPath() === "dailyChallenge" },
         { target: "home" },
       ],
     },
@@ -86,6 +94,7 @@ const gameMachine = createMachine({
           })),
         },
         GO_TO_JOIN: "join",
+        GO_TO_DAILY_CHALLENGE: "dailyChallenge",
       },
     },
     create: {
@@ -262,6 +271,120 @@ const gameMachine = createMachine({
       on: {
         GO_TO_HOME: "home",
         GO_TO_GAME: "game",
+      },
+    },
+    dailyChallenge: {
+      id: "dailyChallenge",
+      initial: "loading",
+      states: {
+        loading: {
+          entry: assign({ loading: true, error: null }),
+          invoke: {
+            id: "getDailyChallenge",
+            src: "getDailyChallenge",
+            onDone: {
+              target: "ready",
+              actions: assign({
+                dailyChallengeData: ({ event }) => event.output,
+                loading: false,
+                error: null,
+              }),
+            },
+            onError: {
+              target: "error",
+              actions: assign({
+                error: ({ event }) => event.output?.message || "Failed to load daily challenge",
+                loading: false,
+              }),
+            },
+          },
+        },
+        ready: {
+          on: {
+            SUBMIT_GUESS: {
+              target: "submitting",
+              actions: assign({
+                currentAttempt: ({ event }) => ({
+                  guess: event.guess,
+                  playerName: event.playerName || "Anonymous",
+                }),
+                playerName: ({ event }) => event.playerName || "Anonymous",
+              }),
+            },
+          },
+        },
+        submitting: {
+          entry: assign({ loading: true }),
+          invoke: {
+            id: "submitDailyChallenge",
+            src: "submitDailyChallenge",
+            input: ({ context }) => ({
+              guess: context.currentAttempt?.guess,
+              playerName: context.currentAttempt?.playerName,
+            }),
+            onDone: {
+              target: "result",
+              actions: assign({
+                currentAttempt: ({ context, event }) => ({
+                  ...context.currentAttempt,
+                  result: event.output,
+                }),
+                attempts: ({ context, event }) => [
+                  ...context.attempts,
+                  {
+                    ...context.currentAttempt,
+                    result: event.output,
+                  },
+                ],
+                isWinner: ({ event }) => event.output.is_winner,
+                loading: false,
+                error: null,
+              }),
+            },
+            onError: {
+              target: "error",
+              actions: assign({
+                error: ({ event }) => event.output?.message || "Failed to submit guess",
+                loading: false,
+              }),
+            },
+          },
+        },
+        result: {
+          on: {
+            SUBMIT_GUESS: [
+              {
+                target: "completed",
+                guard: ({ context }) => context.isWinner,
+              },
+              {
+                target: "submitting",
+                actions: assign({
+                  currentAttempt: ({ event }) => ({
+                    guess: event.guess,
+                    playerName: event.playerName || context.playerName,
+                  }),
+                }),
+              },
+            ],
+            GO_TO_HOME: "#home",
+          },
+        },
+        completed: {
+          on: {
+            GO_TO_HOME: "#home",
+            PLAY_AGAIN: "loading",
+          },
+        },
+        error: {
+          on: {
+            RETRY: "loading",
+            GO_TO_HOME: "#home",
+          },
+        },
+      },
+      on: {
+        GO_TO_HOME: "home",
       },
     },
     game: {

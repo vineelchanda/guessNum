@@ -5,6 +5,7 @@ import HomePage from "./pages/Home";
 import CreateGamePage from "./pages/CreateGame";
 import JoinGamePage from "./pages/JoinGame";
 import GamePage from "./pages/Game";
+import DailyChallengePage from "./pages/DailyChallenge";
 import gameMachine from "./machine";
 import "./App.css";
 // import { db } from "./firebase"; // Import Firebase app and db if needed
@@ -16,6 +17,7 @@ function AppRoutes({ state, send }) {
     if (state.matches("home")) navigate("/");
     if (state.matches("create")) navigate("/create");
     if (state.matches("join")) navigate("/join");
+    if (state.matches("dailyChallenge")) navigate("/daily-challenge");
     if (state.matches("game") && state.context.gameId) {
       // If playerNum is set in context, use it in the URL
       const playerNum = state.context.playerNum || "";
@@ -49,6 +51,10 @@ function AppRoutes({ state, send }) {
             error={state.context.error}
           />
         }
+      />
+      <Route
+        path="/daily-challenge"
+        element={<DailyChallengePage send={send} state={state} />}
       />
       <Route
         path="/game/:gameId/:playerNum?"
