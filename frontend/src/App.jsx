@@ -61,7 +61,6 @@ function AppRoutes({ state, send }) {
 function App() {
   const [state, send] = useMachine(gameMachine);
 
-  console.log(state, "state");
   return <AppRoutes state={state} send={send} />;
 }
 
