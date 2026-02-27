@@ -1,0 +1,34 @@
+Join an existing game as player 2
+---
+tags:
+  - Game
+parameters:
+  - name: game_id
+    in: path
+    required: true
+    schema:
+      type: string
+    example: "5312"
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          player_info:
+            type: object
+            properties:
+              name:
+                type: string
+                example: Bob
+          number:
+            type: string
+            example: "9163"
+responses:
+  200:
+    description: Joined successfully
+  400:
+    description: Game already full
+  404:
+    description: Game not found

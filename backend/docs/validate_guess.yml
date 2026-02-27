@@ -1,0 +1,35 @@
+Validate the opponent's guess
+---
+tags:
+  - Gameplay
+parameters:
+  - name: game_id
+    in: path
+    required: true
+    schema:
+      type: string
+    example: "5312"
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          correct_digits:
+            type: integer
+            example: 2
+          correct_positions:
+            type: integer
+            example: 1
+          player:
+            type: string
+            enum: [player1, player2]
+            example: player2
+responses:
+  200:
+    description: Guess validated
+  400:
+    description: Not your turn to validate or game already finished
+  404:
+    description: Game not found

@@ -1,0 +1,32 @@
+Submit a guess for the current turn
+---
+tags:
+  - Gameplay
+parameters:
+  - name: game_id
+    in: path
+    required: true
+    schema:
+      type: string
+    example: "5312"
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          guess:
+            type: string
+            example: "1234"
+          player:
+            type: string
+            enum: [player1, player2]
+            example: player1
+responses:
+  200:
+    description: Guess submitted, waiting for validation
+  400:
+    description: Not your turn or game already finished
+  404:
+    description: Game not found

@@ -1,0 +1,16 @@
+Get current state of a game
+---
+tags:
+  - Game
+parameters:
+  - name: game_id
+    in: path
+    required: true
+    schema:
+      type: string
+    example: "5312"
+responses:
+  200:
+    description: Game data
+  404:
+    description: Game not found

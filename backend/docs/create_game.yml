@@ -1,0 +1,31 @@
+Create a new 2-player game
+---
+tags:
+  - Game
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          player_info:
+            type: object
+            properties:
+              name:
+                type: string
+                example: Alice
+              number:
+                type: string
+                example: "4827"
+responses:
+  201:
+    description: Game created
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            game_id:
+              type: string
+              example: "5312"
