@@ -9,6 +9,7 @@ export const ENDPOINTS = {
   MAKE_GUESS: (gameId) => `${BASE_URL}/submit_guess/${gameId}`,
   GAME_STATUS: (gameId) => `${BASE_URL}/game_status/${gameId}`,
   VALIDATE_GUESS: (gameId) => `${BASE_URL}/validate_guess/${gameId}`,
+  EXPIRE_GAME: (gameId) => `${BASE_URL}/expire_game/${gameId}`,
 };
 
 export default ENDPOINTS;

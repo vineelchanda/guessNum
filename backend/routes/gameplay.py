@@ -6,11 +6,20 @@ from flask import Blueprint, request, jsonify
 from flasgger import swag_from
 
 from database import db
-from system_player import SystemPlayer, system_players
+from system_player import SystemPlayer
+from routes.game import is_valid_four_digit
 
 DOCS = os.path.join(os.path.dirname(__file__), '..', 'docs')
 
 gameplay_bp = Blueprint('gameplay', __name__)
+
+
+def _make_system_player(game_data):
+    """Reconstruct a SystemPlayer from stored game state, no global dict needed."""
+    sp = SystemPlayer()
+    for turn in game_data.get('player2Turns', []):
+        sp.add_guess(turn['guess'])
+    return sp
 
 
 def handle_system_turn(game_id):
@@ -32,15 +41,10 @@ def handle_system_turn(game_id):
         phase = game_data.get('gamePhase')
 
         if phase == 'player2Guessing':
-            # System makes its guess
-            system_player = system_players.get(game_id)
-            if not system_player:
-                system_player = SystemPlayer()
-                system_players[game_id] = system_player
-
+            # System makes its guess, reconstructed fresh from Firestore state
+            system_player = _make_system_player(game_data)
             player1_turns = game_data.get('player1Turns', [])
             guess = system_player.make_intelligent_guess(player1_turns)
-            system_player.add_guess(guess)
 
             game_ref.update({
                 'currentGuess': {'guess': guess, 'player': 'player2'},
@@ -58,7 +62,7 @@ def handle_system_turn(game_id):
                 system_number = game_data.get('player2FourDigit')
                 guess = current_guess.get('guess')
 
-                system_player = system_players.get(game_id, SystemPlayer())
+                system_player = _make_system_player(game_data)
                 result = system_player.validate_guess(guess, system_number)
 
                 player1_turns = game_data.get('player1Turns', [])
@@ -92,7 +96,7 @@ def handle_system_turn(game_id):
                 player1_number = game_data.get('player1FourDigit')
                 guess = current_guess.get('guess')
 
-                system_player = system_players.get(game_id, SystemPlayer())
+                system_player = _make_system_player(game_data)
                 result = system_player.validate_guess(guess, player1_number)
 
                 player2_turns = game_data.get('player2Turns', [])
@@ -124,6 +128,10 @@ def handle_system_turn(game_id):
 def submit_guess(game_id):
     guess = request.json.get('guess')
     player = request.json.get('player')
+
+    if not is_valid_four_digit(guess):
+        return jsonify({'error': 'Guess must be a 4-digit string with all unique digits'}), 400
+
     game_ref = db.collection('games').document(game_id)
     game = game_ref.get()
 
@@ -157,8 +165,6 @@ def submit_guess(game_id):
 @gameplay_bp.route('/validate_guess/<game_id>', methods=['POST'])
 @swag_from(os.path.join(DOCS, 'validate_guess.yml'))
 def validate_guess(game_id):
-    correct_digits = request.json.get('correct_digits')
-    correct_positions = request.json.get('correct_positions')
     validator = request.json.get('player')
     game_ref = db.collection('games').document(game_id)
     game = game_ref.get()
@@ -182,6 +188,14 @@ def validate_guess(game_id):
     guess = current_guess['guess']
     guesser = current_guess['player']
 
+    # Server computes the result — client input for digits/positions is ignored
+    # validator's own secret number is the answer
+    answer = game_data.get('player2FourDigit') if validator == 'player2' else game_data.get('player1FourDigit')
+    sp = SystemPlayer()
+    result = sp.validate_guess(guess, answer)
+    correct_digits = result['correct_digits']
+    correct_positions = result['correct_positions']
+
     turn_data = {
         'guess': guess,
         'correct_digits': correct_digits,
@@ -198,7 +212,13 @@ def validate_guess(game_id):
         update_data = {'player2Turns': player2_turns}
 
     if correct_digits == 4 and correct_positions == 4:
-        update_data.update({'gameStatus': 'finished', 'gamePhase': 'finished', 'turn': None})
+        winner = game_data.get('player1', {}).get('name', 'Player 1') if guesser == 'player1' else game_data.get('player2', {}).get('name', 'Player 2')
+        update_data.update({
+            'gameStatus': 'finished',
+            'gamePhase': 'finished',
+            'turn': None,
+            'winner': winner,
+        })
     else:
         if validator == 'player2':
             update_data.update({'gamePhase': 'player2Guessing', 'turn': 'player2'})

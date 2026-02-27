@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { listenToGame } from "../../utils";
 import ScratchPad from "./ScratchPad";
+import ENDPOINTS from "../../machine/endpoints";
 
 function GamePage({ send, state }) {
   const [pin, setPin] = useState(["", "", "", ""]);
@@ -13,7 +14,8 @@ function GamePage({ send, state }) {
   const { gameId, playerRole, isMyTurn, gameData } = state.context;
   // Timer state
   const [timeLeft, setTimeLeft] = useState(0);
-  
+  const expiredRef = useRef(false);
+
   const isSystemGame = gameData?.isSystemGame || false;
 
   useEffect(() => {
@@ -39,6 +41,10 @@ function GamePage({ send, state }) {
       const now = Date.now();
       const diff = Math.max(0, Math.floor((expireTime - now) / 1000));
       setTimeLeft(diff);
+      if (diff === 0 && !expiredRef.current && gameData?.gameStatus === "ongoing") {
+        expiredRef.current = true;
+        fetch(ENDPOINTS.EXPIRE_GAME(gameId), { method: "POST" }).catch(() => {});
+      }
     };
     updateTimer();
     const interval = setInterval(updateTimer, 1000);
@@ -346,7 +352,9 @@ function GamePage({ send, state }) {
           }}
         >
           <h1 style={{ fontSize: 32, marginBottom: 8 }}>
-            {winnerRole === playerRole
+            {isFinished && gameData?.winner === null && !winnerRole
+              ? "⏰ Time's up! The game ended in a draw."
+              : winnerRole === playerRole
               ? "🎉 Congratulations! You won the game!"
               : winnerRole
               ? `Better luck next time! ${winnerName} has won the game.`

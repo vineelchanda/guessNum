@@ -72,7 +72,3 @@ class SystemPlayer:
 
     def add_guess(self, guess):
         self.guessed_numbers.add(str(guess).zfill(4))
-
-
-# Shared dict of active system player instances, keyed by game_id
-system_players = {}
