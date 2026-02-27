@@ -270,7 +270,12 @@ function GamePage({ send, state }) {
           marginBottom: 10,
         }}
       >
-        <ScratchPad />
+        <ScratchPad
+          onFillGuess={(guess) => {
+            setPin(guess.split(""));
+            pinRefs[0].current?.focus();
+          }}
+        />
       </div>
       {/* Waiting for player2 message */}
       {gameData?.gameStatus === "waiting_for_player2" && !isSystemGame && (
