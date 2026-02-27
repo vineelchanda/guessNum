@@ -46,7 +46,7 @@ def create_game_vs_system():
 
     expire_at = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(minutes=30)
 
-    system_number = f"{random.randint(0, 9999):04d}"
+    system_number = ''.join(random.sample('0123456789', 4))
     system_players[game_id] = SystemPlayer()
 
     game_data = {
