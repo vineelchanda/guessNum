@@ -26,13 +26,13 @@ def handle_system_turn(game_id):
         game_data = game.to_dict()
 
         if (game_data.get('gameStatus') != 'ongoing' or
-                game_data.get('turn') != 'player2' or
                 not game_data.get('isSystemGame')):
             return
 
         phase = game_data.get('gamePhase')
 
         if phase == 'player2Guessing':
+            # System makes its guess
             system_player = system_players.get(game_id)
             if not system_player:
                 system_player = SystemPlayer()
@@ -48,7 +48,11 @@ def handle_system_turn(game_id):
                 'turn': 'player1',
             })
 
-        elif phase == 'player1Validating':
+            # System auto-validates its own guess immediately after making it
+            threading.Thread(target=handle_system_turn, args=(game_id,), daemon=True).start()
+
+        elif phase == 'player2Validating':
+            # System validates player1's guess against the system's number
             current_guess = game_data.get('currentGuess')
             if current_guess and current_guess.get('player') == 'player1':
                 system_number = game_data.get('player2FourDigit')
@@ -81,7 +85,8 @@ def handle_system_turn(game_id):
                 if update_data.get('turn') == 'player2':
                     threading.Thread(target=handle_system_turn, args=(game_id,), daemon=True).start()
 
-        elif phase == 'player2Validating':
+        elif phase == 'player1Validating':
+            # System auto-validates its own guess against player1's number
             current_guess = game_data.get('currentGuess')
             if current_guess and current_guess.get('player') == 'player2':
                 player1_number = game_data.get('player1FourDigit')
