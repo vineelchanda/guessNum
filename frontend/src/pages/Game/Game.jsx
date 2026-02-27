@@ -165,12 +165,45 @@ function GamePage({ send, state }) {
     }
   }
 
+  // Player color assignments: player1 = blue, player2 = green
+  const playerColors = {
+    player1: {
+      border: "#1976d2",
+      bg: "#f0f7ff",
+      text: "#1565c0",
+      pageBg: "#dbeafe",
+    },
+    player2: {
+      border: "#4caf50",
+      bg: "#f7fff7",
+      text: "#2e7d32",
+      pageBg: "#dcfce7",
+    },
+  };
+
+  const myColor = playerColors[playerRole] || playerColors.player1;
+  const opponentRole = playerRole === "player1" ? "player2" : "player1";
+  const opponentColor = isSystemGame
+    ? { border: "#ff9800", bg: "#fff3e0", text: "#e65100", pageBg: "#fff3e0" }
+    : playerColors[opponentRole];
+
+  // Background changes to the active player's color
+  const activeBg =
+    turn === "player1"
+      ? playerColors.player1.pageBg
+      : turn === "player2"
+      ? isSystemGame
+        ? "#fff3e0"
+        : playerColors.player2.pageBg
+      : "#f5f5f5";
+
   return (
     <div
       style={{
         minHeight: "100vh",
         width: "100vw",
-        background: "linear-gradient(135deg, #fffbe7 0%, #ffe066 100%)",
+        backgroundColor: activeBg,
+        transition: "background-color 0.6s ease",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -348,14 +381,14 @@ function GamePage({ send, state }) {
           className="game-panel"
           style={{
             flex: 1,
-            border: "2px solid #4caf50",
+            border: `2px solid ${myColor.border}`,
             borderRadius: 8,
             padding: 16,
-            background: "#f7fff7",
+            background: myColor.bg,
             minWidth: 280,
           }}
         >
-          <h3 style={{ color: "#388e3c" }}>{myName} (You)</h3>
+          <h3 style={{ color: myColor.text }}>{myName} (You)</h3>
           <div style={{ marginBottom: 12 }}>
             <strong>Your Selected Number:</strong>
             <div style={{ fontSize: 22, letterSpacing: 4, marginTop: 4 }}>
@@ -548,14 +581,14 @@ function GamePage({ send, state }) {
           className="game-panel"
           style={{
             flex: 1,
-            border: isSystemGame ? "2px solid #ff9800" : "2px solid #1976d2",
+            border: `2px solid ${opponentColor.border}`,
             borderRadius: 8,
             padding: 16,
-            background: isSystemGame ? "#fff3e0" : "#f0f7ff",
+            background: opponentColor.bg,
             minWidth: 280,
           }}
         >
-          <h3 style={{ color: isSystemGame ? "#e65100" : "#1976d2" }}>
+          <h3 style={{ color: opponentColor.text }}>
             {opponentName} {isSystemGame ? "🤖" : ""}
           </h3>
           {/* Opponent's number should not be shown for privacy */}
