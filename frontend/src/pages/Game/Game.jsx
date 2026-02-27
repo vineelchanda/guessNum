@@ -255,11 +255,12 @@ function GamePage({ send, state }) {
           }}
           onClick={() => {
             if (gameId) {
-              navigator.clipboard.writeText(gameId);
+              const joinUrl = `${window.location.origin}/join?gameId=${gameId}`;
+              navigator.clipboard.writeText(joinUrl);
             }
           }}
         >
-          Copy
+          Copy Invite Link
         </button>
       </div>
       <div

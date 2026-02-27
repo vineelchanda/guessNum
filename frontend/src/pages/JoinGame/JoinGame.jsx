@@ -1,7 +1,13 @@
 import React, { useState } from "react";
 
 function JoinGamePage({ send }) {
-  const [gameId, setGameId] = useState("");
+  const [gameId, setGameId] = useState(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      return params.get("gameId") || "";
+    }
+    return "";
+  });
   const [playerName, setPlayerName] = useState("");
   const [fourDigit, setFourDigit] = useState("");
   const [infoMsg, setInfoMsg] = useState("");

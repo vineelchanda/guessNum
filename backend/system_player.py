@@ -3,7 +3,10 @@ import random
 
 class SystemPlayer:
     def __init__(self):
-        self.possible_numbers = set(f"{i:04d}" for i in range(10000))
+        self.possible_numbers = set(
+            f"{i:04d}" for i in range(10000)
+            if len(set(f"{i:04d}")) == 4
+        )
         self.guessed_numbers = set()
 
     def validate_guess(self, guess, answer):
