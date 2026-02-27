@@ -5,6 +5,9 @@ import ENDPOINTS from "../../machine/endpoints";
 
 function GamePage({ send, state }) {
   const [pin, setPin] = useState(["", "", "", ""]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [guessError, setGuessError] = useState("");
   const pinRefs = [
     React.useRef(),
     React.useRef(),
@@ -51,6 +54,13 @@ function GamePage({ send, state }) {
     return () => clearInterval(interval);
   }, [gameData?.expireAt]);
 
+  // Enhancement 1: clear submitting flag once the machine returns to idle
+  useEffect(() => {
+    if (state.matches("game.idle")) {
+      setIsSubmitting(false);
+    }
+  }, [state]);
+
   const handlePinChange = (idx, val) => {
     if (!/^[0-9]?$/.test(val)) return; // Only allow single digit
     const newPin = [...pin];
@@ -80,6 +90,20 @@ function GamePage({ send, state }) {
     e.preventDefault();
     const pinValue = pin.join("");
     if (pinValue.length !== 4) return;
+    // Enhancement 2: all four digits must be unique
+    if (new Set(pinValue).size !== 4) {
+      setGuessError("All digits must be unique.");
+      return;
+    }
+    // Enhancement 6: block re-submitting a previously guessed number
+    const myTurns = playerRole === "player1" ? player1Turns : player2Turns;
+    if (myTurns.some((t) => t.guess === pinValue)) {
+      setGuessError("You already guessed that number.");
+      return;
+    }
+    setGuessError("");
+    // Enhancement 1: disable inputs immediately while the API call is in-flight
+    setIsSubmitting(true);
     send({
       type: "MAKE_GUESS",
       guess: pinValue,
@@ -262,11 +286,14 @@ function GamePage({ send, state }) {
           onClick={() => {
             if (gameId) {
               const joinUrl = `${window.location.origin}/join?gameId=${gameId}`;
-              navigator.clipboard.writeText(joinUrl);
+              navigator.clipboard.writeText(joinUrl).then(() => {
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2000);
+              });
             }
           }}
         >
-          Copy Invite Link
+          {copied ? "Copied!" : "Copy Invite Link"}
         </button>
       </div>
       <div
@@ -510,6 +537,8 @@ function GamePage({ send, state }) {
               {formatTime(timeLeft)}
             </span>
           </div>
+          {/* Enhancement 5: hide guess form once game is over */}
+          {!isFinished && (
           <form
             onSubmit={handleGuess}
             style={{
@@ -532,9 +561,9 @@ function GamePage({ send, state }) {
                   pattern="[0-9]*"
                   maxLength={1}
                   value={digit}
-                  onChange={(e) => handlePinChange(idx, e.target.value)}
+                  onChange={(e) => { setGuessError(""); handlePinChange(idx, e.target.value); }}
                   onKeyDown={(e) => handlePinKeyDown(idx, e)}
-                  disabled={!isMyTurn}
+                  disabled={!isMyTurn || isSubmitting}
                   style={{
                     width: 36,
                     height: 44,
@@ -542,7 +571,7 @@ function GamePage({ send, state }) {
                     textAlign: "center",
                     border: "1px solid #aaa",
                     borderRadius: 6,
-                    background: isMyTurn ? "#fff" : "#f3f3f3",
+                    background: (isMyTurn && !isSubmitting) ? "#fff" : "#f3f3f3",
                     outline: "none",
                     fontWeight: 600,
                     letterSpacing: 2,
@@ -553,28 +582,36 @@ function GamePage({ send, state }) {
                 />
               ))}
             </div>
+            {/* Enhancement 2 & 6: inline error for invalid guesses */}
+            {guessError && (
+              <div style={{ color: "#e53935", fontSize: 13, fontWeight: 500 }}>
+                {guessError}
+              </div>
+            )}
+            {/* Enhancement 1 & 3: disabled + "Submitting…" during API call */}
             <button
               type="submit"
-              disabled={!isMyTurn || pin.join("").length !== 4}
+              disabled={!isMyTurn || isSubmitting || pin.join("").length !== 4}
               style={{
                 fontSize: 16,
                 padding: "8px 16px",
                 borderRadius: 4,
                 background:
-                  isMyTurn && pin.join("").length === 4 ? "#4caf50" : "#ccc",
+                  isMyTurn && !isSubmitting && pin.join("").length === 4 ? "#4caf50" : "#ccc",
                 color: "white",
                 border: "none",
                 fontWeight: 600,
                 cursor:
-                  isMyTurn && pin.join("").length === 4
+                  isMyTurn && !isSubmitting && pin.join("").length === 4
                     ? "pointer"
                     : "not-allowed",
                 transition: "background 0.2s",
               }}
             >
-              Submit Guess
+              {isSubmitting ? "Submitting..." : "Submit Guess"}
             </button>
           </form>
+          )}
           <button
             onClick={() => send({ type: "GO_TO_HOME" })}
             style={{
