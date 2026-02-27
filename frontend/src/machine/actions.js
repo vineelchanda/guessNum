@@ -7,33 +7,6 @@ export const entryActions = {
 import { assign } from "xstate";
 import ENDPOINTS from "./endpoints";
 
-// Utility to validate guess: returns { correct_digits, correct_positions }
-function validateGuess(guess, answer) {
-  if (!guess || !answer) return { correct_digits: 0, correct_positions: 0 };
-  const guessArr = guess.toString().split("");
-  const answerArr = answer.toString().split("");
-  let correct_positions = 0;
-  let correct_digits = 0;
-  const answerCount = {};
-  const guessCount = {};
-
-  for (let i = 0; i < Math.min(guessArr.length, answerArr.length); i++) {
-    if (guessArr[i] === answerArr[i]) {
-      correct_positions++;
-    } else {
-      answerCount[answerArr[i]] = (answerCount[answerArr[i]] || 0) + 1;
-      guessCount[guessArr[i]] = (guessCount[guessArr[i]] || 0) + 1;
-    }
-  }
-  for (const digit in guessCount) {
-    if (answerCount[digit]) {
-      correct_digits += Math.min(guessCount[digit], answerCount[digit]);
-    }
-  }
-  correct_digits += correct_positions;
-  return { correct_digits, correct_positions };
-}
-
 export const actions = {
   assignCreateGame: assign(({ context, event }) => {
     console.log(context, event, "evt");
@@ -81,46 +54,20 @@ export const actions = {
       }
     }
 
-    // --- Guess validation logic ---
+    // --- Guess validation: trigger server-side computation ---
     const phase = gameData?.gamePhase;
     const currentGuess = gameData?.currentGuess;
-    let shouldValidate = false;
-    let validator = null;
-    let answer = null;
-    if (
+    const shouldValidate =
       (phase === "player1Validating" && playerRole === "player1") ||
-      (phase === "player2Validating" && playerRole === "player2")
-    ) {
-      shouldValidate = true;
-      validator = playerRole;
-      if (playerRole === "player1") {
-        answer = gameData?.player1?.number;
-      } else if (playerRole === "player2") {
-        answer = gameData?.player2?.number;
-      }
-    }
+      (phase === "player2Validating" && playerRole === "player2");
 
-    if (shouldValidate && currentGuess && answer) {
-      const { correct_digits, correct_positions } = validateGuess(
-        currentGuess.guess,
-        answer
-      );
+    if (shouldValidate && currentGuess) {
+      // Server computes correct_digits/correct_positions — we only send who is validating
       fetch(ENDPOINTS.VALIDATE_GUESS(context.gameId), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          correct_digits,
-          correct_positions,
-          player: validator,
-        }),
-      })
-        .then((res) => res.json())
-        .then(() => {
-          // Optionally, trigger a status fetch or update UI
-        })
-        .catch(() => {
-          // Optionally, handle error
-        });
+        body: JSON.stringify({ player: playerRole }),
+      }).catch(() => {});
     }
 
     return {
