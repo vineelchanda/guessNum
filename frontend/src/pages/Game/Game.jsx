@@ -494,7 +494,28 @@ function GamePage({ send, state }) {
                 Your Turn!
               </span>
             )}
-            {!isMyTurn && turn === "player2" && isSystemGame && (
+            {isSubmitting && (
+              <span
+                style={{
+                  display: "inline-block",
+                  background:
+                    "linear-gradient(90deg, #7986cb 0%, #5c6bc0 100%)",
+                  color: "#fff",
+                  fontWeight: 700,
+                  fontSize: 16,
+                  borderRadius: 8,
+                  padding: "4px 12px",
+                  marginLeft: 16,
+                  boxShadow: "0 2px 8px rgba(92,107,192,0.15)",
+                  border: "2px solid #5c6bc0",
+                  letterSpacing: 1,
+                  animation: "pulse 1.5s infinite",
+                }}
+              >
+                ✅ Validating submission...
+              </span>
+            )}
+            {!isMyTurn && turn === "player2" && isSystemGame && !isSubmitting && (
               <span
                 style={{
                   display: "inline-block",
