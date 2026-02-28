@@ -243,7 +243,7 @@ function GamePage({ send, state }) {
       }}
     >
       {/* Game ID display and copy */}
-      <div
+      {!isSystemGame && <div
         style={{
           background: "#fff",
           borderRadius: 8,
@@ -295,7 +295,7 @@ function GamePage({ send, state }) {
         >
           {copied ? "Copied!" : "Copy Invite Link"}
         </button>
-      </div>
+      </div>}
       <div
         style={{
           width: "100%",
