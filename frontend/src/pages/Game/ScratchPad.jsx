@@ -4,7 +4,7 @@ import "./ScratchPad.css";
 const initialStatus = Array(10).fill(null);
 const ORDINALS = ["1st", "2nd", "3rd", "4th"];
 
-function ScratchPad({ onFillGuess }) {
+function ScratchPad({ onFillGuess, dark = false }) {
   const [digitStatus, setDigitStatus] = useState(initialStatus);
   // grid[digitIdx][posIdx] = true (possible) | false (eliminated)
   const [grid, setGrid] = useState(null);
@@ -57,9 +57,46 @@ function ScratchPad({ onFillGuess }) {
   const canUseGuess =
     allConfirmed && uniqueConfirmed.size === 4;
 
+  // Color tokens — swapped per theme
+  const c = dark
+    ? {
+        rowLabel: "#94a3b8",
+        colHeaderDefault: "#fbbf24",
+        colHeaderConfirmed: "#10b981",
+        noticeText: "#fbbf24",
+        confirmedPreview: "#10b981",
+        cellBgConfirmed: "rgba(16,185,129,0.18)",
+        cellBgPossible: "rgba(251,191,36,0.1)",
+        cellBgEliminated: "rgba(239,68,68,0.08)",
+        cellBorderConfirmed: "#10b981",
+        cellBorderPossible: "#fbbf24",
+        cellBorderEliminated: "#ef4444",
+        cellTextPossible: "#f1f5f9",
+        cellTextEliminated: "#64748b",
+        disabledBtnBg: "#1e293b",
+        disabledBtnColor: "#475569",
+      }
+    : {
+        rowLabel: "#555",
+        colHeaderDefault: "#bfa100",
+        colHeaderConfirmed: "#388e3c",
+        noticeText: "#bfa100",
+        confirmedPreview: "#388e3c",
+        cellBgConfirmed: "#c8f5c8",
+        cellBgPossible: "#fffde7",
+        cellBgEliminated: "#ffeaea",
+        cellBorderConfirmed: "#43a047",
+        cellBorderPossible: "#ffe066",
+        cellBorderEliminated: "#e57373",
+        cellTextPossible: "#333",
+        cellTextEliminated: "#e57373",
+        disabledBtnBg: "#ccc",
+        disabledBtnColor: "white",
+      };
+
   return (
     <div
-      className="scratchpad-container"
+      className={`scratchpad-container${dark ? " scratchpad-dark" : ""}`}
       style={showHelper ? { maxWidth: 700 } : {}}
     >
       <div
@@ -92,7 +129,7 @@ function ScratchPad({ onFillGuess }) {
               style={{
                 marginTop: 8,
                 fontSize: 11,
-                color: "#bfa100",
+                color: c.noticeText,
                 textAlign: "center",
                 fontWeight: 600,
               }}
@@ -126,7 +163,7 @@ function ScratchPad({ onFillGuess }) {
                         style={{
                           fontSize: 11,
                           fontWeight: 700,
-                          color: confirmed ? "#388e3c" : "#bfa100",
+                          color: confirmed ? c.colHeaderConfirmed : c.colHeaderDefault,
                           textAlign: "center",
                           width: 44,
                           paddingBottom: 4,
@@ -146,7 +183,7 @@ function ScratchPad({ onFillGuess }) {
                       style={{
                         fontSize: 14,
                         fontWeight: 700,
-                        color: "#555",
+                        color: c.rowLabel,
                         textAlign: "center",
                         paddingRight: 2,
                       }}
@@ -173,16 +210,16 @@ function ScratchPad({ onFillGuess }) {
                               height: 38,
                               borderRadius: 7,
                               border: isConfirmedHere
-                                ? "2px solid #43a047"
+                                ? `2px solid ${c.cellBorderConfirmed}`
                                 : possible
-                                ? "2px solid #ffe066"
-                                : "2px solid #e57373",
+                                ? `2px solid ${c.cellBorderPossible}`
+                                : `2px solid ${c.cellBorderEliminated}`,
                               background: isConfirmedHere
-                                ? "#c8f5c8"
+                                ? c.cellBgConfirmed
                                 : possible
-                                ? "#fffde7"
-                                : "#ffeaea",
-                              color: possible ? "#333" : "#e57373",
+                                ? c.cellBgPossible
+                                : c.cellBgEliminated,
+                              color: possible ? c.cellTextPossible : c.cellTextEliminated,
                               fontSize: 16,
                               fontWeight: 700,
                               cursor: "pointer",
@@ -212,7 +249,7 @@ function ScratchPad({ onFillGuess }) {
                     fontSize: 20,
                     fontWeight: 700,
                     letterSpacing: 6,
-                    color: "#388e3c",
+                    color: c.confirmedPreview,
                   }}
                 >
                   {confirmedDigits.join("")}
@@ -229,8 +266,8 @@ function ScratchPad({ onFillGuess }) {
                   fontSize: 14,
                   padding: "7px 20px",
                   borderRadius: 8,
-                  background: canUseGuess ? "#4caf50" : "#ccc",
-                  color: "white",
+                  background: canUseGuess ? "#4caf50" : c.disabledBtnBg,
+                  color: canUseGuess ? "white" : c.disabledBtnColor,
                   border: "none",
                   fontWeight: 600,
                   cursor: canUseGuess ? "pointer" : "not-allowed",
