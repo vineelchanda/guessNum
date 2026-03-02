@@ -5,19 +5,24 @@ import HomePage from "./pages/Home";
 import CreateGamePage from "./pages/CreateGame";
 import JoinGamePage from "./pages/JoinGame";
 import GamePage from "./pages/Game";
+import DailyChallenge from "./pages/DailyChallenge/DailyChallenge";
+import Leaderboard from "./pages/Leaderboard/Leaderboard";
 import gameMachine from "./machine";
 import "./App.css";
-// import { db } from "./firebase"; // Import Firebase app and db if needed
+
+const STANDALONE_PATHS = ["/daily", "/leaderboard"];
 
 function AppRoutes({ state, send }) {
   const navigate = useNavigate();
 
   React.useEffect(() => {
+    // Don't override navigation for standalone pages
+    if (STANDALONE_PATHS.some((p) => window.location.pathname.startsWith(p))) return;
+
     if (state.matches("home")) navigate("/");
     if (state.matches("create")) navigate("/create");
     if (state.matches("join")) navigate("/join");
     if (state.matches("game") && state.context.gameId) {
-      // If playerNum is set in context, use it in the URL
       const playerNum = state.context.playerNum || "";
       navigate(
         `/game/${state.context.gameId}${playerNum ? `/${playerNum}` : ""}`
@@ -54,6 +59,8 @@ function AppRoutes({ state, send }) {
         path="/game/:gameId/:playerNum?"
         element={<GamePage send={send} state={state} />}
       />
+      <Route path="/daily" element={<DailyChallenge />} />
+      <Route path="/leaderboard" element={<Leaderboard />} />
     </Routes>
   );
 }

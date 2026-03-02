@@ -5,6 +5,7 @@ import os
 
 from routes.game import game_bp
 from routes.gameplay import gameplay_bp
+from routes.daily import daily_bp
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
@@ -18,6 +19,7 @@ Swagger(app, template={
 
 app.register_blueprint(game_bp)
 app.register_blueprint(gameplay_bp)
+app.register_blueprint(daily_bp)
 
 DOCS = os.path.join(os.path.dirname(__file__), 'docs')
 

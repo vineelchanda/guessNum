@@ -10,6 +10,9 @@ export const ENDPOINTS = {
   GAME_STATUS: (gameId) => `${BASE_URL}/game_status/${gameId}`,
   VALIDATE_GUESS: (gameId) => `${BASE_URL}/validate_guess/${gameId}`,
   EXPIRE_GAME: (gameId) => `${BASE_URL}/expire_game/${gameId}`,
+  DAILY_CHALLENGE_START: `${BASE_URL}/daily_challenge/start`,
+  DAILY_CHALLENGE_GUESS: (gameId) => `${BASE_URL}/daily_challenge/guess/${gameId}`,
+  DAILY_LEADERBOARD: `${BASE_URL}/daily_leaderboard`,
 };
 
 export default ENDPOINTS;

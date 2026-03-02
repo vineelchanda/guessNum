@@ -1,8 +1,11 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import styles from "./HomePage.module.css";
 
 function HomePage({ send }) {
+  const navigate = useNavigate();
   const [hovered, setHovered] = React.useState("");
+
   return (
     <div className={styles.homePage}>
       <h1 className={styles.heading}>Welcome to GuessNum!</h1>
@@ -76,6 +79,50 @@ function HomePage({ send }) {
             onClick={() => send({ type: "GO_TO_JOIN" })}
           >
             Join Game
+          </button>
+        </div>
+        <div className={`${styles.card} ${styles.cardDaily}`}>
+          <h2 className={`${styles.cardTitle} ${styles.cardTitleDaily}`}>
+            Daily Challenge
+          </h2>
+          <div className={styles.cardDesc}>
+            A fresh 4-digit puzzle every day — same number for everyone!
+            <br />
+            Resets at 1:00 AM. Compete for the fastest solve.
+          </div>
+          <button
+            className={
+              hovered === "daily"
+                ? `${styles.button} ${styles.buttonDaily} ${styles.buttonActive}`
+                : `${styles.button} ${styles.buttonDaily}`
+            }
+            onMouseEnter={() => setHovered("daily")}
+            onMouseLeave={() => setHovered("")}
+            onClick={() => navigate("/daily")}
+          >
+            Play Daily Challenge
+          </button>
+        </div>
+        <div className={`${styles.card} ${styles.cardLeaderboard}`}>
+          <h2 className={`${styles.cardTitle} ${styles.cardTitleLeaderboard}`}>
+            Leaderboard
+          </h2>
+          <div className={styles.cardDesc}>
+            See today's top solvers ranked by fewest guesses and fastest time.
+            <br />
+            Can you make the board?
+          </div>
+          <button
+            className={
+              hovered === "leaderboard"
+                ? `${styles.button} ${styles.buttonLeaderboard} ${styles.buttonActive}`
+                : `${styles.button} ${styles.buttonLeaderboard}`
+            }
+            onMouseEnter={() => setHovered("leaderboard")}
+            onMouseLeave={() => setHovered("")}
+            onClick={() => navigate("/leaderboard")}
+          >
+            View Leaderboard
           </button>
         </div>
       </div>
