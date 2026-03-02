@@ -42,6 +42,8 @@ def start_daily_challenge():
     daily_number = generate_daily_number(date)
     start_time = datetime.now(timezone.utc)
 
+    expire_at = start_time + timedelta(days=3)
+
     game_ref = db.collection('daily_games').document()
     game_ref.set({
         'playerName': player_name,
@@ -54,6 +56,7 @@ def start_daily_challenge():
         'endTime': None,
         'timeTaken': None,
         'guessCount': 0,
+        'expireAt': expire_at,
     })
 
     return jsonify({'game_id': game_ref.id, 'date': date})
@@ -152,7 +155,10 @@ def _record_to_leaderboard(date, name, guesses, time_seconds, finished_at):
     for i, e in enumerate(entries):
         e['rank'] = i + 1
 
-    leaderboard_ref.set({'date': date, 'entries': entries})
+    leaderboard_date = datetime.strptime(date, '%Y-%m-%d').replace(tzinfo=timezone.utc)
+    leaderboard_expire_at = leaderboard_date + timedelta(days=30)
+
+    leaderboard_ref.set({'date': date, 'entries': entries, 'expireAt': leaderboard_expire_at})
 
 
 @daily_bp.route('/daily_leaderboard', methods=['GET'])
