@@ -5,188 +5,217 @@
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  background: linear-gradient(135deg, #fffbe7 0%, #ffe066 100%);
-  color: #222;
-  font-family: "Segoe UI", "Roboto", "Arial", sans-serif;
+  background: #0a0a1a;
+  position: relative;
+  color: #f1f5f9;
+  font-family: "Inter", "Segoe UI", system-ui, sans-serif;
   padding: 0 1rem 2rem 1rem;
   box-sizing: border-box;
   overflow-x: hidden;
 }
-@media (max-width: 600px) {
-  .homePage {
-    padding: 1.2rem 0.5rem 2rem 0.5rem;
-  }
-  .heading {
-    font-size: 2rem;
-    margin-bottom: 0.7rem;
-    margin-top: 0.5rem;
-  }
-  .subText {
-    font-size: 1rem;
-    margin-bottom: 1.5rem;
-    max-width: 98vw;
-    padding: 0.5rem 0.2rem 0.5rem 0.2rem;
-  }
-  .actionContainer {
-    max-width: 98vw;
-    gap: 1.5rem;
-    margin-top: 1.2rem;
-    margin-bottom: 1.2rem;
-  }
-  .card {
-    padding: 1.5rem 0.7rem 1.2rem 0.7rem;
-    border-radius: 12px;
-    margin-bottom: 1.2rem;
-  }
-  .cardTitle {
-    font-size: 1.1rem;
-    margin-bottom: 0.7rem;
-  }
-  .cardDesc {
-    margin-bottom: 0.7rem;
-  }
-  .button {
-    font-size: 1rem;
-    padding: 0.8rem 1.4rem;
-    margin-top: 1rem;
-  }
+
+/* Aurora blobs background */
+.homePage::before {
+  content: "";
+  position: fixed;
+  top: -20%;
+  left: -10%;
+  width: 60%;
+  height: 60%;
+  background: radial-gradient(circle, rgba(124, 58, 237, 0.18) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+  animation: blobFloat 8s ease-in-out infinite;
 }
 
-@media (max-width: 400px) {
-  .subText {
-    font-size: 0.95rem;
-    padding: 0 2px;
-  }
-  .cardDesc {
-    font-size: 0.95rem;
-  }
+.homePage::after {
+  content: "";
+  position: fixed;
+  bottom: -10%;
+  right: -10%;
+  width: 50%;
+  height: 50%;
+  background: radial-gradient(circle, rgba(6, 182, 212, 0.14) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+  animation: blobFloat 10s ease-in-out infinite reverse;
 }
 
-@media (max-width: 900px) and (min-width: 601px) {
-  .homePage {
-    padding: 0 0.5rem 2rem 0.5rem;
-  }
-  .heading {
-    font-size: 2.2rem;
-  }
-  .subText {
-    font-size: 1.1rem;
-    max-width: 90vw;
-  }
-  .actionContainer {
-    max-width: 90vw;
-  }
-  .card {
-    padding: 1.5rem 1rem 1rem 1rem;
-    border-radius: 12px;
-  }
-  .cardTitle {
-    font-size: 1.2rem;
-  }
-  .button {
-    font-size: 1.05rem;
-    padding: 0.75rem 1.7rem;
-  }
+@keyframes blobFloat {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -20px) scale(1.05); }
+  66% { transform: translate(-20px, 10px) scale(0.97); }
 }
 
 .heading {
-  font-size: 2.8rem;
-  font-weight: 700;
+  font-size: 3rem;
+  font-weight: 800;
   margin-bottom: 0.5rem;
-  letter-spacing: 1px;
-  text-shadow: 1px 2px 8px #fff7, 0 2px 8px #f7971e55;
+  margin-top: 2.5rem;
+  letter-spacing: -1px;
+  position: relative;
+  z-index: 1;
+  background: linear-gradient(135deg, #a78bfa 0%, #06b6d4 60%, #f1f5f9 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: none;
 }
 
 .subText {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   margin-bottom: 2.5rem;
-  color: #444;
+  color: #94a3b8;
   text-align: center;
-  max-width: 500px;
+  max-width: 480px;
+  line-height: 1.7;
+  position: relative;
+  z-index: 1;
 }
 
 .brand {
-  color: #1a237e;
+  color: #a78bfa;
   font-weight: 700;
+  -webkit-text-fill-color: #a78bfa;
 }
 
 .exciting {
-  color: #d72660;
+  color: #06b6d4;
   font-weight: 700;
-  text-shadow: 0 1px 8px #fff8;
+  -webkit-text-fill-color: #06b6d4;
 }
 
 .secret {
-  color: #1a237e;
+  color: #f472b6;
   font-weight: 700;
+  -webkit-text-fill-color: #f472b6;
 }
 
 .challenge {
-  color: #d72660;
+  color: #a78bfa;
   font-weight: 700;
+  -webkit-text-fill-color: #a78bfa;
 }
 
 .ready {
   color: #fff;
   font-weight: 700;
-  background: linear-gradient(90deg, #7a8fa6 0%, #b97a95 100%);
-  padding: 0 0.4em;
+  -webkit-text-fill-color: #fff;
+  background: linear-gradient(90deg, #7c3aed 0%, #06b6d4 100%);
+  padding: 0 0.5em;
   border-radius: 6px;
-  box-shadow: 0 2px 8px #b97a9555;
   display: inline-block;
 }
 
 .actionContainer {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1.5rem;
   width: 100%;
-  max-width: 400px;
+  max-width: 420px;
   margin-bottom: 2rem;
-  margin-top: 1.5rem;
+  margin-top: 0.5rem;
   flex-shrink: 0;
+  position: relative;
+  z-index: 1;
 }
 
 .card {
-  background: #fff8;
-  border-radius: 16px;
-  box-shadow: 0 4px 24px #0002;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255,255,255,0.08);
   padding: 2rem 1.5rem 1.5rem 1.5rem;
   display: flex;
   flex-direction: column;
   align-items: center;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+}
+
+.card:hover {
+  border-color: rgba(124, 58, 237, 0.4);
+  box-shadow: 0 8px 40px rgba(124, 58, 237, 0.15), 0 0 0 1px rgba(124, 58, 237, 0.2);
+  transform: translateY(-2px);
 }
 
 .cardTitle {
-  margin: 0;
-  font-size: 1.4rem;
-  color: #f7971e;
+  margin: 0 0 0.5rem 0;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #a78bfa;
 }
 
 .cardDesc {
-  color: #444;
-  margin-top: 8px;
+  color: #94a3b8;
+  margin-top: 4px;
   text-align: center;
+  font-size: 0.95rem;
+  line-height: 1.6;
 }
 
 .button {
-  background: linear-gradient(90deg, #f7971e 0%, #ffd200 100%);
-  color: #222;
+  background: linear-gradient(135deg, #7c3aed 0%, #06b6d4 100%);
+  color: #fff;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   padding: 0.8rem 2.2rem;
-  font-size: 1.1rem;
-  font-weight: 600;
+  font-size: 1rem;
+  font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 2px 8px #f7971e55;
-  transition: transform 0.1s, box-shadow 0.1s, background 0.2s;
-  margin-top: 1rem;
+  box-shadow: 0 4px 16px rgba(124, 58, 237, 0.3);
+  transition: box-shadow 0.2s, transform 0.12s;
+  margin-top: 1.2rem;
+  letter-spacing: 0.3px;
 }
 
 .button:hover,
 .buttonActive {
-  background: linear-gradient(90deg, #ffd200 0%, #f7971e 100%);
-  color: #222;
-  transform: scale(1.05);
-  box-shadow: 0 4px 16px #f7971e77;
+  box-shadow: 0 0 28px rgba(124, 58, 237, 0.55), 0 0 56px rgba(6, 182, 212, 0.2);
+  transform: translateY(-2px) scale(1.03);
+}
+
+.button:active {
+  transform: translateY(0) scale(1);
+}
+
+@media (max-width: 600px) {
+  .homePage {
+    padding: 1rem 0.5rem 2rem 0.5rem;
+  }
+  .heading {
+    font-size: 2.1rem;
+    margin-top: 1.5rem;
+  }
+  .subText {
+    font-size: 0.98rem;
+    max-width: 98vw;
+  }
+  .actionContainer {
+    max-width: 98vw;
+    gap: 1.2rem;
+  }
+  .card {
+    padding: 1.4rem 1rem 1.2rem 1rem;
+  }
+  .cardTitle {
+    font-size: 1.1rem;
+  }
+  .button {
+    font-size: 0.97rem;
+    padding: 0.75rem 1.4rem;
+  }
+}
+
+@media (max-width: 900px) and (min-width: 601px) {
+  .heading {
+    font-size: 2.3rem;
+  }
+  .subText {
+    max-width: 88vw;
+  }
+  .actionContainer {
+    max-width: 88vw;
+  }
 }

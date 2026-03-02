@@ -1,5 +1,65 @@
 import React, { useState } from "react";
 
+const glassCard = {
+  background: "rgba(255, 255, 255, 0.05)",
+  backdropFilter: "blur(24px)",
+  WebkitBackdropFilter: "blur(24px)",
+  border: "1px solid rgba(255, 255, 255, 0.1)",
+  borderRadius: 20,
+  boxShadow: "0 8px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08)",
+  padding: "40px 32px 32px 32px",
+  minWidth: 340,
+  maxWidth: 420,
+  width: "100%",
+  textAlign: "center",
+  position: "relative",
+  overflow: "hidden",
+};
+
+const inputStyle = {
+  width: "100%",
+  padding: "12px 14px",
+  borderRadius: 10,
+  border: "1.5px solid rgba(255,255,255,0.12)",
+  fontSize: 16,
+  outline: "none",
+  fontWeight: 500,
+  background: "rgba(255,255,255,0.06)",
+  color: "#f1f5f9",
+  transition: "border 0.2s, box-shadow 0.2s",
+  boxSizing: "border-box",
+};
+
+const btnPrimary = {
+  width: "100%",
+  fontSize: 17,
+  padding: "12px 0",
+  borderRadius: 10,
+  background: "linear-gradient(135deg, #7c3aed 0%, #06b6d4 100%)",
+  color: "#fff",
+  border: "none",
+  fontWeight: 700,
+  marginTop: 8,
+  cursor: "pointer",
+  boxShadow: "0 4px 20px rgba(124, 58, 237, 0.35)",
+  transition: "box-shadow 0.2s, transform 0.12s",
+  letterSpacing: "0.4px",
+};
+
+const btnSecondary = {
+  width: "100%",
+  fontSize: 15,
+  padding: "10px 0",
+  borderRadius: 10,
+  background: "rgba(255,255,255,0.06)",
+  color: "#94a3b8",
+  border: "1px solid rgba(255,255,255,0.1)",
+  fontWeight: 600,
+  marginTop: 14,
+  cursor: "pointer",
+  transition: "background 0.2s, color 0.2s",
+};
+
 function JoinGamePage({ send }) {
   const [gameId, setGameId] = useState(() => {
     if (typeof window !== "undefined") {
@@ -12,9 +72,7 @@ function JoinGamePage({ send }) {
   const [fourDigit, setFourDigit] = useState("");
   const [infoMsg, setInfoMsg] = useState("");
 
-  const isUniqueDigits = (num) => {
-    return new Set(num).size === num.length;
-  };
+  const isUniqueDigits = (num) => new Set(num).size === num.length;
 
   const handleJoin = (e) => {
     e.preventDefault();
@@ -23,11 +81,7 @@ function JoinGamePage({ send }) {
       return;
     }
     setInfoMsg("");
-    send({
-      type: "JOIN_GAME",
-      gameId,
-      playerInfo: { name: playerName, fourDigit },
-    });
+    send({ type: "JOIN_GAME", gameId, playerInfo: { name: playerName, fourDigit } });
   };
 
   return (
@@ -37,218 +91,122 @@ function JoinGamePage({ send }) {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: "linear-gradient(135deg, #fffbe7 0%, #ffe066 100%)",
-        padding: 0,
-        fontFamily: "Segoe UI, Roboto, Arial, sans-serif",
+        background: "#0a0a1a",
+        padding: "20px",
+        fontFamily: "Inter, Segoe UI, system-ui, sans-serif",
+        position: "relative",
+        overflow: "hidden",
       }}
     >
-      {/* Responsive styles for JoinGame page */}
+      {/* Ambient blobs */}
+      <div style={{
+        position: "fixed", top: "-15%", right: "-10%", width: "55%", height: "55%",
+        background: "radial-gradient(circle, rgba(6,182,212,0.14) 0%, transparent 70%)",
+        pointerEvents: "none", zIndex: 0,
+      }} />
+      <div style={{
+        position: "fixed", bottom: "-10%", left: "-10%", width: "45%", height: "45%",
+        background: "radial-gradient(circle, rgba(124,58,237,0.12) 0%, transparent 70%)",
+        pointerEvents: "none", zIndex: 0,
+      }} />
+
       <style>{`
         @media (max-width: 600px) {
           .join-game-card {
             min-width: 0 !important;
-            max-width: 98vw !important;
-            padding: 18px 4vw 18px 4vw !important;
-          }
-          .join-game-card h2 {
-            font-size: 22px !important;
-          }
-          .join-game-card input {
-            font-size: 15px !important;
-            padding: 8px 8px !important;
-          }
-          .join-game-card button {
-            font-size: 15px !important;
-            padding: 8px 0 !important;
+            max-width: 97vw !important;
+            padding: 24px 16px 20px 16px !important;
           }
         }
+        .join-game-input:focus {
+          border-color: rgba(6,182,212,0.7) !important;
+          box-shadow: 0 0 0 3px rgba(6,182,212,0.15) !important;
+        }
+        .join-game-input::placeholder { color: #4b5563; }
+        .btn-join-glow:hover {
+          box-shadow: 0 0 32px rgba(6,182,212,0.5), 0 0 64px rgba(124,58,237,0.2) !important;
+          transform: translateY(-1px);
+        }
+        .btn-join-secondary:hover {
+          background: rgba(255,255,255,0.1) !important;
+          color: #f1f5f9 !important;
+        }
       `}</style>
-      <div
-        className="join-game-card"
-        style={{
-          background: "linear-gradient(135deg, #f8fafc 60%, #e0eafc 100%)",
-          borderRadius: 20,
-          boxShadow: "0 6px 32px #b0c4de33, 0 1.5px 8px #1976d211",
-          padding: "40px 30px 32px 30px",
-          minWidth: 340,
-          maxWidth: 420,
-          width: "100%",
-          textAlign: "center",
-          position: "relative",
-          overflow: "hidden",
-        }}
-      >
-        {/* Decorative dots pattern */}
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            height: 18,
-            background:
-              "repeating-linear-gradient(90deg, #cfdef3 0 2px, transparent 2px 16px)",
-            opacity: 0.25,
-          }}
-        />
-        <div
-          style={{
-            position: "absolute",
-            bottom: 0,
-            left: 0,
-            right: 0,
-            height: 18,
-            background:
-              "repeating-linear-gradient(90deg, #cfdef3 0 2px, transparent 2px 16px)",
-            opacity: 0.18,
-          }}
-        />
-        <h2
-          style={{
-            fontWeight: 800,
-            fontSize: 28,
-            marginBottom: 8,
-            color: "#1976d2",
-            letterSpacing: 1,
-          }}
-        >
-          Join a Game
+
+      <div className="join-game-card" style={{ ...glassCard, zIndex: 1 }}>
+        {/* Top accent bar — cyan leading */}
+        <div style={{
+          position: "absolute", top: 0, left: 0, right: 0, height: 3,
+          background: "linear-gradient(90deg, #06b6d4 0%, #7c3aed 100%)",
+          borderRadius: "20px 20px 0 0",
+        }} />
+
+        <h2 style={{ fontWeight: 800, fontSize: 26, marginBottom: 8, color: "#67e8f9", letterSpacing: 0.5 }}>
+          🔗 Join a Game
         </h2>
-        <div style={{ color: "#555", marginBottom: 18, fontSize: 16 }}>
-          Enter the Game ID shared by your friend, your name, and a secret
-          4-digit number.
-          <br />
-          <span style={{ color: "#bfa100", fontWeight: 600 }}>
-            All digits must be unique!
-          </span>
+        <div style={{ color: "#64748b", marginBottom: 24, fontSize: 14.5, lineHeight: 1.65 }}>
+          Enter the Game ID shared by your friend,<br />
+          your name, and a secret 4-digit number.<br />
+          <span style={{ color: "#f59e0b", fontWeight: 600 }}>All digits must be unique!</span>
         </div>
-        <form
-          onSubmit={handleJoin}
-          style={{ display: "flex", flexDirection: "column", gap: 16 }}
-          autoComplete="off"
-        >
+
+        <form onSubmit={handleJoin} style={{ display: "flex", flexDirection: "column", gap: 14 }} autoComplete="off">
           <input
+            className="join-game-input"
             type="text"
             placeholder="Game ID"
             value={gameId}
             onChange={(e) => setGameId(e.target.value)}
             required
-            style={{
-              padding: "10px 12px",
-              borderRadius: 6,
-              border: "1.5px solid #1976d2",
-              fontSize: 17,
-              marginBottom: 2,
-              outline: "none",
-              fontWeight: 500,
-              background: "#f7faff",
-              transition: "border 0.2s",
-            }}
+            style={inputStyle}
           />
           <input
+            className="join-game-input"
             type="text"
             placeholder="Your Name"
             value={playerName}
             onChange={(e) => setPlayerName(e.target.value)}
             required
-            style={{
-              padding: "10px 12px",
-              borderRadius: 6,
-              border: "1.5px solid #1976d2",
-              fontSize: 17,
-              marginBottom: 2,
-              outline: "none",
-              fontWeight: 500,
-              background: "#f7faff",
-              transition: "border 0.2s",
-            }}
+            style={inputStyle}
           />
           <input
+            className="join-game-input"
             type="text"
-            placeholder="4-digit Number (unique digits)"
+            placeholder="4-digit Secret (unique digits)"
             value={fourDigit}
             onChange={(e) => {
               let val = e.target.value.replace(/[^\d]/g, "");
-              // Remove repeated digits as user types
               let unique = "";
               for (let ch of val) {
                 if (!unique.includes(ch) && unique.length < 4) unique += ch;
               }
               setFourDigit(unique);
-              if (unique.length < 4) {
-                setInfoMsg("");
-              } else if (!isUniqueDigits(unique)) {
-                setInfoMsg("Each digit must be unique.");
-              } else {
-                setInfoMsg("");
-              }
+              setInfoMsg(unique.length === 4 && !isUniqueDigits(unique) ? "Each digit must be unique." : "");
             }}
             maxLength={4}
             required
-            style={{
-              padding: "10px 12px",
-              borderRadius: 6,
-              border: "1.5px solid #bfa100",
-              fontSize: 17,
-              marginBottom: 2,
-              outline: "none",
-              fontWeight: 600,
-              background: "#fffbe7",
-              letterSpacing: 4,
-              textAlign: "center",
-              transition: "border 0.2s",
-            }}
+            style={{ ...inputStyle, letterSpacing: 8, textAlign: "center", fontSize: 20, fontWeight: 700 }}
           />
           {infoMsg && (
-            <div
-              style={{
-                color: "#bfa100",
-                fontWeight: 600,
-                fontSize: 15,
-                marginTop: -8,
-              }}
-            >
-              {infoMsg}
+            <div style={{ color: "#f59e0b", fontWeight: 600, fontSize: 13.5, marginTop: -6, textAlign: "left" }}>
+              ⚠️ {infoMsg}
             </div>
           )}
           <button
+            className="btn-join-glow"
             type="submit"
-            style={{
-              fontSize: 18,
-              padding: "10px 0",
-              borderRadius: 6,
-              background: "linear-gradient(90deg, #ffd200 0%, #f7971e 100%)",
-              color: "#222",
-              border: "none",
-              fontWeight: 700,
-              marginTop: 8,
-              cursor: "pointer",
-              boxShadow: "0 2px 8px #ffd20055",
-              transition: "background 0.2s",
-              letterSpacing: "0.5px",
-            }}
+            style={btnPrimary}
           >
             Join Game
           </button>
         </form>
+
         <button
+          className="btn-join-secondary"
           onClick={() => send({ type: "GO_TO_HOME" })}
-          style={{
-            fontSize: 15,
-            padding: "7px 0",
-            borderRadius: 6,
-            background: "linear-gradient(90deg, #ffd200 0%, #f7971e 100%)",
-            color: "#222",
-            border: "none",
-            fontWeight: 600,
-            marginTop: 18,
-            width: "100%",
-            cursor: "pointer",
-            boxShadow: "0 2px 8px #ffd20055",
-            transition: "background 0.2s",
-          }}
+          style={btnSecondary}
         >
-          Back to Home
+          ← Back to Home
         </button>
       </div>
     </div>

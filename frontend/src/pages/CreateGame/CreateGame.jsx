@@ -1,15 +1,75 @@
 import React, { useState } from "react";
 
+const glassCard = {
+  background: "rgba(255, 255, 255, 0.05)",
+  backdropFilter: "blur(24px)",
+  WebkitBackdropFilter: "blur(24px)",
+  border: "1px solid rgba(255, 255, 255, 0.1)",
+  borderRadius: 20,
+  boxShadow: "0 8px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08)",
+  padding: "40px 32px 32px 32px",
+  minWidth: 340,
+  maxWidth: 420,
+  width: "100%",
+  textAlign: "center",
+  position: "relative",
+  overflow: "hidden",
+};
+
+const inputStyle = (accentColor = "#7c3aed") => ({
+  width: "100%",
+  padding: "12px 14px",
+  borderRadius: 10,
+  border: `1.5px solid rgba(255,255,255,0.12)`,
+  fontSize: 16,
+  outline: "none",
+  fontWeight: 500,
+  background: "rgba(255,255,255,0.06)",
+  color: "#f1f5f9",
+  transition: "border 0.2s, box-shadow 0.2s",
+  boxSizing: "border-box",
+});
+
+const btnPrimary = (disabled) => ({
+  width: "100%",
+  fontSize: 17,
+  padding: "12px 0",
+  borderRadius: 10,
+  background: disabled
+    ? "rgba(255,255,255,0.08)"
+    : "linear-gradient(135deg, #7c3aed 0%, #06b6d4 100%)",
+  color: disabled ? "#64748b" : "#fff",
+  border: "none",
+  fontWeight: 700,
+  marginTop: 8,
+  cursor: disabled ? "not-allowed" : "pointer",
+  boxShadow: disabled ? "none" : "0 4px 20px rgba(124, 58, 237, 0.35)",
+  transition: "box-shadow 0.2s, transform 0.12s",
+  letterSpacing: "0.4px",
+});
+
+const btnSecondary = {
+  width: "100%",
+  fontSize: 15,
+  padding: "10px 0",
+  borderRadius: 10,
+  background: "rgba(255,255,255,0.06)",
+  color: "#94a3b8",
+  border: "1px solid rgba(255,255,255,0.1)",
+  fontWeight: 600,
+  marginTop: 14,
+  cursor: "pointer",
+  transition: "background 0.2s, color 0.2s",
+};
+
 function CreateGamePage({ send, loading, error, state }) {
   const [playerName, setPlayerName] = useState("");
   const [fourDigit, setFourDigit] = useState("");
   const [infoMsg, setInfoMsg] = useState("");
-  
+
   const isSystemGame = state?.context?.isSystemGame || false;
 
-  const isUniqueDigits = (num) => {
-    return new Set(num).size === num.length;
-  };
+  const isUniqueDigits = (num) => new Set(num).size === num.length;
 
   const handleCreate = (e) => {
     e.preventDefault();
@@ -18,10 +78,7 @@ function CreateGamePage({ send, loading, error, state }) {
       return;
     }
     setInfoMsg("");
-    send({
-      type: "CREATE_GAME",
-      playerInfo: { name: playerName, fourDigit },
-    });
+    send({ type: "CREATE_GAME", playerInfo: { name: playerName, fourDigit } });
   };
 
   return (
@@ -31,225 +88,133 @@ function CreateGamePage({ send, loading, error, state }) {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: "linear-gradient(135deg, #fffbe7 0%, #ffe066 100%)",
-        padding: 0,
-        fontFamily: "Segoe UI, Roboto, Arial, sans-serif",
+        background: "#0a0a1a",
+        padding: "20px",
+        fontFamily: "Inter, Segoe UI, system-ui, sans-serif",
+        position: "relative",
+        overflow: "hidden",
       }}
     >
-      {/* Responsive styles for CreateGame page */}
+      {/* Ambient blobs */}
+      <div style={{
+        position: "fixed", top: "-15%", left: "-10%", width: "55%", height: "55%",
+        background: "radial-gradient(circle, rgba(124,58,237,0.16) 0%, transparent 70%)",
+        pointerEvents: "none", zIndex: 0,
+      }} />
+      <div style={{
+        position: "fixed", bottom: "-10%", right: "-10%", width: "45%", height: "45%",
+        background: "radial-gradient(circle, rgba(6,182,212,0.12) 0%, transparent 70%)",
+        pointerEvents: "none", zIndex: 0,
+      }} />
+
+      {/* Responsive override */}
       <style>{`
         @media (max-width: 600px) {
           .create-game-card {
             min-width: 0 !important;
-            max-width: 98vw !important;
-            padding: 18px 4vw 18px 4vw !important;
-          }
-          .create-game-card h2 {
-            font-size: 22px !important;
-          }
-          .create-game-card input {
-            font-size: 15px !important;
-            padding: 8px 8px !important;
-          }
-          .create-game-card button {
-            font-size: 15px !important;
-            padding: 8px 0 !important;
+            max-width: 97vw !important;
+            padding: 24px 16px 20px 16px !important;
           }
         }
+        .create-game-input:focus {
+          border-color: rgba(124,58,237,0.7) !important;
+          box-shadow: 0 0 0 3px rgba(124,58,237,0.15) !important;
+        }
+        .create-game-input::placeholder { color: #4b5563; }
+        .btn-primary-glow:hover:not(:disabled) {
+          box-shadow: 0 0 32px rgba(124,58,237,0.55), 0 0 64px rgba(6,182,212,0.2) !important;
+          transform: translateY(-1px);
+        }
+        .btn-secondary-ghost:hover {
+          background: rgba(255,255,255,0.1) !important;
+          color: #f1f5f9 !important;
+        }
       `}</style>
-      <div
-        className="create-game-card"
-        style={{
-          background: "linear-gradient(135deg, #f8fafc 60%, #e0eafc 100%)",
-          borderRadius: 20,
-          boxShadow: "0 6px 32px #b0c4de33, 0 1.5px 8px #1976d211",
-          padding: "40px 30px 32px 30px",
-          minWidth: 340,
-          maxWidth: 420,
-          width: "100%",
-          textAlign: "center",
-          position: "relative",
-          overflow: "hidden",
-        }}
-      >
-        {/* Decorative dots pattern */}
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            height: 18,
-            background:
-              "repeating-linear-gradient(90deg, #cfdef3 0 2px, transparent 2px 16px)",
-            opacity: 0.25,
-          }}
-        />
-        <div
-          style={{
-            position: "absolute",
-            bottom: 0,
-            left: 0,
-            right: 0,
-            height: 18,
-            background:
-              "repeating-linear-gradient(90deg, #cfdef3 0 2px, transparent 2px 16px)",
-            opacity: 0.18,
-          }}
-        />
-        <h2
-          style={{
-            fontWeight: 800,
-            fontSize: 28,
-            marginBottom: 8,
-            color: "#43a047",
-            letterSpacing: 1,
-          }}
-        >
-          {isSystemGame ? "Play vs System" : "Create a New Game"}
+
+      <div className="create-game-card" style={{ ...glassCard, zIndex: 1 }}>
+        {/* Top accent bar */}
+        <div style={{
+          position: "absolute", top: 0, left: 0, right: 0, height: 3,
+          background: "linear-gradient(90deg, #7c3aed 0%, #06b6d4 100%)",
+          borderRadius: "20px 20px 0 0",
+        }} />
+
+        <h2 style={{ fontWeight: 800, fontSize: 26, marginBottom: 8, color: "#a78bfa", letterSpacing: 0.5 }}>
+          {isSystemGame ? "⚔️ Play vs System" : "🎮 Create a New Game"}
         </h2>
-        <div style={{ color: "#555", marginBottom: 18, fontSize: 16 }}>
+        <div style={{ color: "#64748b", marginBottom: 24, fontSize: 14.5, lineHeight: 1.65 }}>
           {isSystemGame ? (
             <>
-              Challenge the AI system to a guessing game! <br />
-              Enter your name and a secret 4-digit number.
-              <br />
-              <span style={{ color: "#bfa100", fontWeight: 600 }}>
-                All digits must be unique!
-              </span>
-              <br />
-              <span style={{ color: "#1976d2", fontWeight: 500 }}>
-                The system will automatically join and play against you!
-              </span>
+              Challenge the AI to a guessing duel!<br />
+              Enter your name and a secret 4-digit number.<br />
+              <span style={{ color: "#f59e0b", fontWeight: 600 }}>All digits must be unique!</span><br />
+              <span style={{ color: "#06b6d4", fontWeight: 500 }}>The system will auto-join and play!</span>
             </>
           ) : (
             <>
-              Ready to challenge your friends? <br />
-              Enter your name and a secret 4-digit number to start a new game.
-              <br />
-              <span style={{ color: "#bfa100", fontWeight: 600 }}>
-                All digits must be unique!
-              </span>
-              <br />
-              <span style={{ color: "#1976d2", fontWeight: 500 }}>
-                Share the Game ID with your friend after creating the game!
-              </span>
+              Ready to challenge your friends?<br />
+              Enter your name and a secret 4-digit number.<br />
+              <span style={{ color: "#f59e0b", fontWeight: 600 }}>All digits must be unique!</span><br />
+              <span style={{ color: "#06b6d4", fontWeight: 500 }}>Share the Game ID after creating!</span>
             </>
           )}
         </div>
-        <form
-          onSubmit={handleCreate}
-          style={{ display: "flex", flexDirection: "column", gap: 16 }}
-          autoComplete="off"
-        >
+
+        <form onSubmit={handleCreate} style={{ display: "flex", flexDirection: "column", gap: 14 }} autoComplete="off">
           <input
+            className="create-game-input"
             type="text"
             placeholder="Your Name"
             value={playerName}
             onChange={(e) => setPlayerName(e.target.value)}
             required
-            style={{
-              padding: "10px 12px",
-              borderRadius: 6,
-              border: "1.5px solid #43a047",
-              fontSize: 17,
-              marginBottom: 2,
-              outline: "none",
-              fontWeight: 500,
-              background: "#f7fff7",
-              transition: "border 0.2s",
-            }}
+            style={inputStyle()}
           />
           <input
+            className="create-game-input"
             type="text"
-            placeholder="4-digit Number (unique digits)"
+            placeholder="4-digit Secret (unique digits)"
             value={fourDigit}
             onChange={(e) => {
               let val = e.target.value.replace(/[^\d]/g, "");
-              // Remove repeated digits as user types
               let unique = "";
               for (let ch of val) {
                 if (!unique.includes(ch) && unique.length < 4) unique += ch;
               }
               setFourDigit(unique);
-              if (unique.length < 4) {
-                setInfoMsg("");
-              } else if (!isUniqueDigits(unique)) {
-                setInfoMsg("Each digit must be unique.");
-              } else {
-                setInfoMsg("");
-              }
+              setInfoMsg(unique.length === 4 && !isUniqueDigits(unique) ? "Each digit must be unique." : "");
             }}
             maxLength={4}
             required
-            style={{
-              padding: "10px 12px",
-              borderRadius: 6,
-              border: "1.5px solid #bfa100",
-              fontSize: 17,
-              marginBottom: 2,
-              outline: "none",
-              fontWeight: 600,
-              background: "#fffbe7",
-              letterSpacing: 4,
-              textAlign: "center",
-              transition: "border 0.2s",
-            }}
+            style={{ ...inputStyle(), letterSpacing: 8, textAlign: "center", fontSize: 20, fontWeight: 700 }}
           />
           {infoMsg && (
-            <div
-              style={{
-                color: "#bfa100",
-                fontWeight: 600,
-                fontSize: 15,
-                marginTop: -8,
-              }}
-            >
-              {infoMsg}
+            <div style={{ color: "#f59e0b", fontWeight: 600, fontSize: 13.5, marginTop: -6, textAlign: "left" }}>
+              ⚠️ {infoMsg}
             </div>
           )}
           <button
+            className="btn-primary-glow"
             type="submit"
             disabled={loading}
-            style={{
-              fontSize: 18,
-              padding: "10px 0",
-              borderRadius: 6,
-              background: loading
-                ? "linear-gradient(90deg, #f3e7b3 0%, #ffe066 100%)"
-                : "linear-gradient(90deg, #ffd200 0%, #f7971e 100%)",
-              color: loading ? "#888" : "#222",
-              border: "none",
-              fontWeight: 700,
-              marginTop: 8,
-              cursor: loading ? "not-allowed" : "pointer",
-              boxShadow: "0 2px 8px #ffd20055",
-              transition: "background 0.2s",
-              letterSpacing: "0.5px",
-            }}
+            style={btnPrimary(loading)}
           >
-            {loading ? "Creating..." : (isSystemGame ? "Start vs System" : "Create Game")}
+            {loading ? "Creating..." : isSystemGame ? "Start vs System" : "Create Game"}
           </button>
         </form>
-        {error && <div style={{ color: "red", marginTop: 10 }}>{error}</div>}
+
+        {error && (
+          <div style={{ color: "#ef4444", marginTop: 12, fontSize: 14, fontWeight: 500 }}>
+            ❌ {error}
+          </div>
+        )}
+
         <button
+          className="btn-secondary-ghost"
           onClick={() => send({ type: "GO_TO_HOME" })}
-          style={{
-            fontSize: 15,
-            padding: "7px 0",
-            borderRadius: 6,
-            background: "linear-gradient(90deg, #ffd200 0%, #f7971e 100%)",
-            color: "#222",
-            border: "none",
-            fontWeight: 600,
-            marginTop: 18,
-            width: "100%",
-            cursor: "pointer",
-            boxShadow: "0 2px 8px #ffd20055",
-            transition: "background 0.2s",
-          }}
+          style={btnSecondary}
         >
-          Back to Home
+          ← Back to Home
         </button>
       </div>
     </div>
