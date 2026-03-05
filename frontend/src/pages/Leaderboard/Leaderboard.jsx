@@ -52,9 +52,9 @@ export default function Leaderboard() {
   }, [fetchLeaderboard]);
 
   const ghostBtnStyle = {
-    background: "rgba(255,255,255,0.07)",
-    color: "#94a3b8",
-    border: "1px solid rgba(255,255,255,0.1)",
+    background: "rgba(255,255,255,0.6)",
+    color: "#5a4a6e",
+    border: "1px solid rgba(233,30,140,0.15)",
     borderRadius: 8,
     padding: "0.5rem 1rem",
     fontSize: "0.88rem",
@@ -66,8 +66,8 @@ export default function Leaderboard() {
     <div
       style={{
         minHeight: "100vh",
-        background: "#0a0a1a",
-        color: "#f1f5f9",
+        background: "#fffef0",
+        color: "#1a1a2e",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -86,7 +86,7 @@ export default function Leaderboard() {
           right: "-10%",
           width: "50%",
           height: "50%",
-          background: "radial-gradient(circle, rgba(245,158,11,0.12) 0%, transparent 70%)",
+          background: "radial-gradient(circle, rgba(255,215,0,0.2) 0%, transparent 70%)",
           pointerEvents: "none",
           zIndex: 0,
         }}
@@ -98,7 +98,7 @@ export default function Leaderboard() {
           left: "-10%",
           width: "45%",
           height: "45%",
-          background: "radial-gradient(circle, rgba(124,58,237,0.1) 0%, transparent 70%)",
+          background: "radial-gradient(circle, rgba(233,30,140,0.12) 0%, transparent 70%)",
           pointerEvents: "none",
           zIndex: 0,
         }}
@@ -122,7 +122,7 @@ export default function Leaderboard() {
         </button>
         <button
           onClick={() => navigate("/daily")}
-          style={{ ...ghostBtnStyle, color: "#fbbf24" }}
+          style={{ ...ghostBtnStyle, color: "#ff6b35" }}
         >
           ⚡ Play Today
         </button>
@@ -135,7 +135,7 @@ export default function Leaderboard() {
             fontSize: "2.2rem",
             fontWeight: 800,
             margin: "0 0 0.25rem",
-            background: "linear-gradient(135deg, #fbbf24 0%, #f97316 50%, #a78bfa 100%)",
+            background: "linear-gradient(135deg, #e91e8c 0%, #ffd700 50%, #22c55e 100%)",
             WebkitBackgroundClip: "text",
             WebkitTextFillColor: "transparent",
             backgroundClip: "text",
@@ -144,7 +144,7 @@ export default function Leaderboard() {
           🏆 Daily Leaderboard
         </h1>
         {date && (
-          <p style={{ color: "#64748b", margin: "4px 0 0", fontSize: "0.88rem" }}>
+          <p style={{ color: "#8a7a9e", margin: "4px 0 0", fontSize: "0.88rem" }}>
             {formatDate(date)}
           </p>
         )}
@@ -153,12 +153,12 @@ export default function Leaderboard() {
       {/* Leaderboard card */}
       <div
         style={{
-          background: "rgba(255,255,255,0.05)",
+          background: "rgba(255,255,255,0.8)",
           backdropFilter: "blur(20px)",
           WebkitBackdropFilter: "blur(20px)",
-          border: "1px solid rgba(255,255,255,0.1)",
+          border: "1px solid rgba(233,30,140,0.18)",
           borderRadius: 18,
-          boxShadow: "0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08)",
+          boxShadow: "0 8px 32px rgba(233,30,140,0.1), inset 0 1px 0 rgba(255,255,255,0.9)",
           width: "100%",
           maxWidth: 560,
           overflow: "hidden",
@@ -173,10 +173,10 @@ export default function Leaderboard() {
             justifyContent: "space-between",
             alignItems: "center",
             padding: "1rem 1.5rem",
-            borderBottom: "1px solid rgba(255,255,255,0.07)",
+            borderBottom: "1px solid rgba(233,30,140,0.1)",
           }}
         >
-          <span style={{ color: "#94a3b8", fontSize: "0.88rem" }}>
+          <span style={{ color: "#5a4a6e", fontSize: "0.88rem" }}>
             {entries.length} {entries.length === 1 ? "player" : "players"} completed today
           </span>
           <button
@@ -206,11 +206,11 @@ export default function Leaderboard() {
             style={{
               padding: "3rem 1.5rem",
               textAlign: "center",
-              color: "#64748b",
+              color: "#8a7a9e",
             }}
           >
             <div style={{ fontSize: "2.5rem", marginBottom: 12 }}>🎯</div>
-            <p style={{ margin: 0, fontWeight: 600, color: "#94a3b8" }}>
+            <p style={{ margin: 0, fontWeight: 600, color: "#5a4a6e" }}>
               No completions yet!
             </p>
             <p style={{ margin: "6px 0 1.5rem", fontSize: "0.88rem" }}>
@@ -219,7 +219,7 @@ export default function Leaderboard() {
             <button
               onClick={() => navigate("/daily")}
               style={{
-                background: "linear-gradient(135deg, #7c3aed 0%, #06b6d4 100%)",
+                background: "linear-gradient(135deg, #e91e8c 0%, #ff6b35 100%)",
                 color: "#fff",
                 border: "none",
                 borderRadius: 10,
@@ -244,12 +244,12 @@ export default function Leaderboard() {
                 gridTemplateColumns: "48px 1fr 80px 80px",
                 gap: 8,
                 padding: "0.6rem 1.5rem",
-                color: "#64748b",
+                color: "#8a7a9e",
                 fontSize: "0.75rem",
                 fontWeight: 600,
                 textTransform: "uppercase",
                 letterSpacing: "0.06em",
-                borderBottom: "1px solid rgba(255,255,255,0.05)",
+                borderBottom: "1px solid rgba(233,30,140,0.08)",
               }}
             >
               <span>Rank</span>
@@ -261,8 +261,8 @@ export default function Leaderboard() {
             {/* Rows */}
             {entries.map((entry, i) => {
               const isTop3 = entry.rank <= 3;
-              const rankColors = ["#fbbf24", "#94a3b8", "#cd7c2e"];
-              const rowColor = isTop3 ? rankColors[entry.rank - 1] : "#64748b";
+              const rankColors = ["#fbbf24", "#5a4a6e", "#cd7c2e"];
+              const rowColor = isTop3 ? rankColors[entry.rank - 1] : "#8a7a9e";
 
               return (
                 <div
@@ -274,7 +274,7 @@ export default function Leaderboard() {
                     padding: "0.85rem 1.5rem",
                     borderBottom:
                       i < entries.length - 1
-                        ? "1px solid rgba(255,255,255,0.04)"
+                        ? "1px solid rgba(233,30,140,0.07)"
                         : "none",
                     background: isTop3 ? `rgba(${entry.rank === 1 ? "251,191,36" : entry.rank === 2 ? "148,163,184" : "205,124,46"},0.04)` : "transparent",
                     alignItems: "center",
@@ -296,7 +296,7 @@ export default function Leaderboard() {
                   <span
                     style={{
                       fontWeight: isTop3 ? 700 : 500,
-                      color: isTop3 ? "#f1f5f9" : "#94a3b8",
+                      color: isTop3 ? "#1a1a2e" : "#5a4a6e",
                       overflow: "hidden",
                       textOverflow: "ellipsis",
                       whiteSpace: "nowrap",
@@ -310,7 +310,7 @@ export default function Leaderboard() {
                     style={{
                       textAlign: "center",
                       fontWeight: 700,
-                      color: isTop3 ? rowColor : "#64748b",
+                      color: isTop3 ? rowColor : "#8a7a9e",
                       fontVariantNumeric: "tabular-nums",
                     }}
                   >
@@ -321,7 +321,7 @@ export default function Leaderboard() {
                   <span
                     style={{
                       textAlign: "right",
-                      color: isTop3 ? "#a78bfa" : "#64748b",
+                      color: isTop3 ? "#e91e8c" : "#8a7a9e",
                       fontWeight: isTop3 ? 700 : 500,
                       fontVariantNumeric: "tabular-nums",
                       fontSize: "0.9rem",
@@ -340,7 +340,7 @@ export default function Leaderboard() {
       {lastRefreshed && (
         <p
           style={{
-            color: "#334155",
+            color: "#8a7a9e",
             fontSize: "0.75rem",
             marginTop: 12,
             position: "relative",

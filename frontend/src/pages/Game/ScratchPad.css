@@ -60,38 +60,38 @@
   color: #e57373;
 }
 
-/* ── Dark theme variant ──────────────────────────── */
+/* ── Holi variant (used in DailyChallenge) ───────── */
 .scratchpad-dark {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.75);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(233, 30, 140, 0.2);
+  box-shadow: 0 4px 24px rgba(233, 30, 140, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.9);
 }
 
 .scratchpad-dark .scratchpad-title {
-  color: #fbbf24;
+  color: #e91e8c;
 }
 
 .scratchpad-dark .scratchpad-digit {
-  background: rgba(255, 255, 255, 0.07);
-  border-color: rgba(255, 255, 255, 0.15);
-  color: #f1f5f9;
+  background: rgba(255, 255, 255, 0.7);
+  border-color: rgba(233, 30, 140, 0.2);
+  color: #1a1a2e;
 }
 
 .scratchpad-dark .scratchpad-digit:hover {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(251, 191, 36, 0.4);
+  background: rgba(233, 30, 140, 0.08);
+  border-color: rgba(233, 30, 140, 0.45);
 }
 
 .scratchpad-dark .scratchpad-digit.tick {
-  background: rgba(16, 185, 129, 0.18);
-  border-color: #10b981;
-  color: #34d399;
+  background: rgba(34, 197, 94, 0.15);
+  border-color: #22c55e;
+  color: #16a34a;
 }
 
 .scratchpad-dark .scratchpad-digit.cross {
-  background: rgba(239, 68, 68, 0.12);
+  background: rgba(239, 68, 68, 0.1);
   border-color: #ef4444;
-  color: #f87171;
+  color: #dc2626;
 }

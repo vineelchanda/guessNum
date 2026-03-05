@@ -24,14 +24,14 @@ function GuessFeedback({ guesses }) {
               display: "flex",
               alignItems: "center",
               gap: 10,
-              background: "rgba(255,255,255,0.04)",
-              border: "1px solid rgba(255,255,255,0.07)",
+              background: "rgba(255,255,255,0.65)",
+              border: "1px solid rgba(233,30,140,0.1)",
               borderRadius: 10,
               padding: "7px 12px",
               animation: "slideIn 0.25s ease-out",
             }}
           >
-            <span style={{ color: "#475569", fontSize: "0.78rem", minWidth: 22, fontVariantNumeric: "tabular-nums" }}>
+            <span style={{ color: "#8a7a9e", fontSize: "0.78rem", minWidth: 22, fontVariantNumeric: "tabular-nums" }}>
               #{i + 1}
             </span>
             <div style={{ display: "flex", gap: 5 }}>
@@ -44,12 +44,12 @@ function GuessFeedback({ guesses }) {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    background: "rgba(255,255,255,0.08)",
-                    border: "1px solid rgba(255,255,255,0.13)",
+                    background: "rgba(255,255,255,0.7)",
+                    border: "1px solid rgba(233,30,140,0.15)",
                     borderRadius: 6,
                     fontWeight: 700,
                     fontSize: "0.95rem",
-                    color: "#f1f5f9",
+                    color: "#1a1a2e",
                   }}
                 >
                   {d}
@@ -58,16 +58,16 @@ function GuessFeedback({ guesses }) {
             </div>
             <div style={{ display: "flex", gap: 3, marginLeft: 4 }}>
               {Array(g.correct_positions).fill(0).map((_, k) => (
-                <span key={`g${k}`} style={{ color: "#10b981", fontSize: 13 }}>●</span>
+                <span key={`g${k}`} style={{ color: "#22c55e", fontSize: 13 }}>●</span>
               ))}
               {Array(wrongPos).fill(0).map((_, k) => (
-                <span key={`y${k}`} style={{ color: "#f59e0b", fontSize: 13 }}>●</span>
+                <span key={`y${k}`} style={{ color: "#ffd700", fontSize: 13 }}>●</span>
               ))}
               {Array(wrong).fill(0).map((_, k) => (
-                <span key={`w${k}`} style={{ color: "#1e293b", fontSize: 13 }}>●</span>
+                <span key={`w${k}`} style={{ color: "#d1a0b0", fontSize: 13 }}>●</span>
               ))}
             </div>
-            <span style={{ color: "#475569", fontSize: "0.72rem", marginLeft: "auto", fontVariantNumeric: "tabular-nums" }}>
+            <span style={{ color: "#8a7a9e", fontSize: "0.72rem", marginLeft: "auto", fontVariantNumeric: "tabular-nums" }}>
               {g.correct_positions}✓ {wrongPos}~
             </span>
           </div>
@@ -175,12 +175,12 @@ export default function DailyChallenge() {
   }
 
   const cardStyle = {
-    background: "rgba(255,255,255,0.05)",
+    background: "rgba(255,255,255,0.8)",
     backdropFilter: "blur(20px)",
     WebkitBackdropFilter: "blur(20px)",
-    border: "1px solid rgba(255,255,255,0.1)",
+    border: "1px solid rgba(255,107,53,0.22)",
     borderRadius: 18,
-    boxShadow: "0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08)",
+    boxShadow: "0 8px 32px rgba(255,107,53,0.12), inset 0 1px 0 rgba(255,255,255,0.9)",
     padding: "1.5rem",
     width: "100%",
     maxWidth: 460,
@@ -189,7 +189,7 @@ export default function DailyChallenge() {
   };
 
   const btnGradient = {
-    background: "linear-gradient(135deg, #7c3aed 0%, #06b6d4 100%)",
+    background: "linear-gradient(135deg, #e91e8c 0%, #ff6b35 100%)",
     color: "#fff",
     border: "none",
     borderRadius: 10,
@@ -197,7 +197,7 @@ export default function DailyChallenge() {
     fontSize: "1rem",
     fontWeight: 700,
     cursor: "pointer",
-    boxShadow: "0 4px 16px rgba(124,58,237,0.3)",
+    boxShadow: "0 4px 16px rgba(233,30,140,0.3)",
     transition: "box-shadow 0.2s, transform 0.12s",
     width: "100%",
     marginTop: 12,
@@ -205,14 +205,14 @@ export default function DailyChallenge() {
 
   const btnAmber = {
     ...btnGradient,
-    background: "linear-gradient(135deg, #f59e0b 0%, #f97316 100%)",
-    boxShadow: "0 4px 16px rgba(245,158,11,0.3)",
+    background: "linear-gradient(135deg, #ffd700 0%, #ff6b35 100%)",
+    boxShadow: "0 4px 16px rgba(255,107,53,0.3)",
   };
 
   const ghostBtn = {
-    background: "rgba(255,255,255,0.07)",
-    color: "#94a3b8",
-    border: "1px solid rgba(255,255,255,0.1)",
+    background: "rgba(255,255,255,0.6)",
+    color: "#5a4a6e",
+    border: "1px solid rgba(233,30,140,0.15)",
     borderRadius: 8,
     padding: "0.5rem 1rem",
     fontSize: "0.88rem",
@@ -231,8 +231,8 @@ export default function DailyChallenge() {
     <div
       style={{
         minHeight: "100vh",
-        background: "#0a0a1a",
-        color: "#f1f5f9",
+        background: "#fffef0",
+        color: "#1a1a2e",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -256,26 +256,26 @@ export default function DailyChallenge() {
       `}</style>
 
       {/* Background blobs */}
-      <div style={{ position:"fixed", top:"-20%", left:"-10%", width:"55%", height:"55%", background:"radial-gradient(circle, rgba(245,158,11,0.13) 0%, transparent 70%)", pointerEvents:"none", zIndex:0 }} />
-      <div style={{ position:"fixed", bottom:"-10%", right:"-10%", width:"45%", height:"45%", background:"radial-gradient(circle, rgba(124,58,237,0.1) 0%, transparent 70%)", pointerEvents:"none", zIndex:0 }} />
+      <div style={{ position:"fixed", top:"-20%", left:"-10%", width:"55%", height:"55%", background:"radial-gradient(circle, rgba(255,215,0,0.2) 0%, transparent 70%)", pointerEvents:"none", zIndex:0 }} />
+      <div style={{ position:"fixed", bottom:"-10%", right:"-10%", width:"45%", height:"45%", background:"radial-gradient(circle, rgba(255,107,53,0.15) 0%, transparent 70%)", pointerEvents:"none", zIndex:0 }} />
 
       {/* Top nav */}
       <div style={{ width:"100%", maxWidth:960, display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:"1.25rem", position:"relative", zIndex:1 }}>
         <button onClick={() => navigate("/")} style={ghostBtn}>← Home</button>
         <div style={{ textAlign:"center" }}>
-          <h1 style={{ fontSize:"1.8rem", fontWeight:800, margin:0, background:"linear-gradient(135deg, #fbbf24 0%, #f97316 50%, #a78bfa 100%)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text" }}>
+          <h1 style={{ fontSize:"1.8rem", fontWeight:800, margin:0, background:"linear-gradient(135deg, #e91e8c 0%, #ffd700 50%, #22c55e 100%)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text" }}>
             Daily Challenge
           </h1>
-          {dateDisplay && <p style={{ color:"#64748b", margin:"2px 0 0", fontSize:"0.8rem" }}>{dateDisplay}</p>}
+          {dateDisplay && <p style={{ color:"#8a7a9e", margin:"2px 0 0", fontSize:"0.8rem" }}>{dateDisplay}</p>}
         </div>
-        <button onClick={() => navigate("/leaderboard")} style={{ ...ghostBtn, color:"#fbbf24" }}>🏆 Board</button>
+        <button onClick={() => navigate("/leaderboard")} style={{ ...ghostBtn, color:"#ff6b35" }}>🏆 Board</button>
       </div>
 
       {/* Name entry */}
       {phase === "name_entry" && (
         <div style={{ ...cardStyle, maxWidth:420, animation:"popIn 0.35s ease-out", position:"relative", zIndex:1 }}>
-          <h2 style={{ margin:"0 0 0.4rem", fontWeight:700, fontSize:"1.05rem", color:"#fbbf24" }}>Enter your name to begin</h2>
-          <p style={{ color:"#64748b", fontSize:"0.85rem", margin:"0 0 1.1rem" }}>
+          <h2 style={{ margin:"0 0 0.4rem", fontWeight:700, fontSize:"1.05rem", color:"#ff6b35" }}>Enter your name to begin</h2>
+          <p style={{ color:"#5a4a6e", fontSize:"0.85rem", margin:"0 0 1.1rem" }}>
             Your name appears on the leaderboard when you solve today's puzzle.
           </p>
           <form onSubmit={handleStart} style={{ display:"flex", flexDirection:"column", gap:10 }}>
@@ -286,7 +286,7 @@ export default function DailyChallenge() {
               placeholder="Your name"
               autoFocus
               maxLength={24}
-              style={{ background:"rgba(255,255,255,0.07)", border:"1px solid rgba(255,255,255,0.12)", borderRadius:10, padding:"0.75rem 1rem", color:"#f1f5f9", fontSize:"1rem", outline:"none", width:"100%", boxSizing:"border-box" }}
+              style={{ background:"rgba(255,255,255,0.7)", border:"1px solid rgba(255,107,53,0.22)", borderRadius:10, padding:"0.75rem 1rem", color:"#1a1a2e", fontSize:"1rem", outline:"none", width:"100%", boxSizing:"border-box" }}
             />
             {error && <div style={{ color:"#ef4444", fontSize:"0.85rem" }}>{error}</div>}
             <button type="submit" style={{ ...btnAmber, marginTop:8 }} disabled={isLoading || !playerName.trim()}>
@@ -316,23 +316,23 @@ export default function DailyChallenge() {
           <div style={cardStyle}>
             {/* Stats bar */}
             <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:14, paddingBottom:12, borderBottom:"1px solid rgba(255,255,255,0.07)" }}>
-              <span style={{ color:"#94a3b8", fontSize:"0.85rem" }}>
-                Hi, <strong style={{ color:"#f1f5f9" }}>{playerName}</strong>
+              <span style={{ color:"#5a4a6e", fontSize:"0.85rem" }}>
+                Hi, <strong style={{ color:"#1a1a2e" }}>{playerName}</strong>
               </span>
-              <span style={{ background:"rgba(245,158,11,0.15)", border:"1px solid rgba(245,158,11,0.3)", borderRadius:8, padding:"3px 10px", color:"#fbbf24", fontWeight:700, fontSize:"0.92rem", fontVariantNumeric:"tabular-nums" }}>
+              <span style={{ background:"rgba(255,107,53,0.12)", border:"1px solid rgba(255,107,53,0.3)", borderRadius:8, padding:"3px 10px", color:"#ea580c", fontWeight:700, fontSize:"0.92rem", fontVariantNumeric:"tabular-nums" }}>
                 ⏱ {formatTime(elapsed)}
               </span>
-              <span style={{ color:"#64748b", fontSize:"0.82rem" }}>
+              <span style={{ color:"#8a7a9e", fontSize:"0.82rem" }}>
                 {guesses.length} {guesses.length === 1 ? "guess" : "guesses"}
               </span>
             </div>
 
             {/* Legend (first time only) */}
             {guesses.length === 0 && (
-              <div style={{ display:"flex", gap:14, justifyContent:"center", marginBottom:14, fontSize:"0.78rem", color:"#64748b" }}>
-                <span><span style={{ color:"#10b981" }}>●</span> Right position</span>
-                <span><span style={{ color:"#f59e0b" }}>●</span> Wrong position</span>
-                <span><span style={{ color:"#1e293b" }}>●</span> Not in number</span>
+              <div style={{ display:"flex", gap:14, justifyContent:"center", marginBottom:14, fontSize:"0.78rem", color:"#8a7a9e" }}>
+                <span><span style={{ color:"#22c55e" }}>●</span> Right position</span>
+                <span><span style={{ color:"#ffd700" }}>●</span> Wrong position</span>
+                <span><span style={{ color:"#d1a0b0" }}>●</span> Not in number</span>
               </div>
             )}
 
@@ -341,7 +341,7 @@ export default function DailyChallenge() {
 
             {/* PIN input */}
             <form onSubmit={handleGuess}>
-              <p style={{ color:"#94a3b8", fontSize:"0.82rem", margin:"0 0 10px", textAlign:"center" }}>
+              <p style={{ color:"#5a4a6e", fontSize:"0.82rem", margin:"0 0 10px", textAlign:"center" }}>
                 Guess a 4-digit number — all digits unique
               </p>
               <div style={{ display:"flex", gap:10, justifyContent:"center", marginBottom:10 }}>
@@ -362,10 +362,10 @@ export default function DailyChallenge() {
                       textAlign: "center",
                       fontSize: "1.5rem",
                       fontWeight: 700,
-                      background: pinDigits[i] ? "rgba(245,158,11,0.1)" : "rgba(255,255,255,0.07)",
-                      border: `2px solid ${pinDigits[i] ? "rgba(245,158,11,0.5)" : "rgba(255,255,255,0.12)"}`,
+                      background: pinDigits[i] ? "rgba(255,107,53,0.1)" : "rgba(255,255,255,0.7)",
+                      border: `2px solid ${pinDigits[i] ? "rgba(255,107,53,0.5)" : "rgba(233,30,140,0.18)"}`,
                       borderRadius: 10,
-                      color: "#f1f5f9",
+                      color: "#1a1a2e",
                       outline: "none",
                       caretColor: "transparent",
                       transition: "border-color 0.15s, background 0.15s",
@@ -415,30 +415,30 @@ export default function DailyChallenge() {
             ...cardStyle,
             maxWidth: 460,
             textAlign: "center",
-            border: "1px solid rgba(245,158,11,0.35)",
-            boxShadow: "0 8px 40px rgba(245,158,11,0.18), inset 0 1px 0 rgba(255,255,255,0.08)",
+            border: "1px solid rgba(255,107,53,0.35)",
+            boxShadow: "0 8px 40px rgba(255,107,53,0.2), inset 0 1px 0 rgba(255,255,255,0.9)",
             animation: "popIn 0.4s ease-out",
             position: "relative",
             zIndex: 1,
           }}
         >
           <div style={{ fontSize: "3rem", marginBottom: 8 }}>🎉</div>
-          <h2 style={{ margin:"0 0 0.2rem", fontWeight:800, fontSize:"1.55rem", background:"linear-gradient(135deg, #fbbf24 0%, #f97316 100%)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text" }}>
+          <h2 style={{ margin:"0 0 0.2rem", fontWeight:800, fontSize:"1.55rem", background:"linear-gradient(135deg, #e91e8c 0%, #ff6b35 100%)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text" }}>
             You cracked it!
           </h2>
-          <p style={{ color:"#94a3b8", margin:"0 0 1.4rem" }}>
-            Well done, <strong style={{ color:"#f1f5f9" }}>{playerName}</strong>!
+          <p style={{ color:"#5a4a6e", margin:"0 0 1.4rem" }}>
+            Well done, <strong style={{ color:"#1a1a2e" }}>{playerName}</strong>!
           </p>
 
           <div style={{ display:"flex", justifyContent:"center", gap:32, marginBottom:20 }}>
             <div style={{ textAlign:"center" }}>
-              <div style={{ fontSize:"2.2rem", fontWeight:800, color:"#a78bfa" }}>{guesses.length}</div>
-              <div style={{ color:"#64748b", fontSize:"0.78rem" }}>Guesses</div>
+              <div style={{ fontSize:"2.2rem", fontWeight:800, color:"#e91e8c" }}>{guesses.length}</div>
+              <div style={{ color:"#8a7a9e", fontSize:"0.78rem" }}>Guesses</div>
             </div>
-            <div style={{ width:1, background:"rgba(255,255,255,0.08)" }} />
+            <div style={{ width:1, background:"rgba(233,30,140,0.15)" }} />
             <div style={{ textAlign:"center" }}>
-              <div style={{ fontSize:"2.2rem", fontWeight:800, color:"#fbbf24" }}>{formatTime(timeTaken ?? elapsed)}</div>
-              <div style={{ color:"#64748b", fontSize:"0.78rem" }}>Time</div>
+              <div style={{ fontSize:"2.2rem", fontWeight:800, color:"#ff6b35" }}>{formatTime(timeTaken ?? elapsed)}</div>
+              <div style={{ color:"#8a7a9e", fontSize:"0.78rem" }}>Time</div>
             </div>
           </div>
 
